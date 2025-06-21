@@ -1,5 +1,5 @@
 {
-  "name": "Crackr",
+  "name": "crackr",
   "private": true,
   "scripts": {
     "build": "turbo run build",
