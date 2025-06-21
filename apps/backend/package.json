@@ -8,8 +8,12 @@
     "dev": "tsx watch src/index.ts",
     "start": "npm run build && node dist/index.js"
   },
+  "dependencies": {
+    "@repo/drizzle": "workspace:*",
+    "tsx": "^4.20.3"
+  },
   "devDependencies": {
-    "@repo/typescript-config":"workspace:*"
+    "@repo/typescript-config": "workspace:*"
   },
   "keywords": [],
   "author": "",

@@ -1,0 +1,20 @@
+{
+  "name": "@repo/zod",
+  "version": "1.0.0",
+  "description": "",
+  "author": "akgbytes@gmail.com",
+  "license": "ISC",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^22.15.3"
+  },
+  "dependencies": {
+    "zod": "^3.25.67",
+    "@repo/utils":"workspace:*"
+  }
+}
