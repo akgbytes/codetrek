@@ -23,6 +23,9 @@ importers:
       '@repo/drizzle':
         specifier: workspace:*
         version: link:../../packages/drizzle
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
       tsx:
         specifier: ^4.20.3
         version: 4.20.3
@@ -39,6 +42,9 @@ importers:
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
+      '@repo/zod':
+        specifier: workspace:*
+        version: link:../zod
       dotenv:
         specifier: ^16.5.0
         version: 16.5.0
@@ -152,6 +158,9 @@ importers:
       '@repo/utils':
         specifier: workspace:*
         version: link:../utils
+      dotenv:
+        specifier: ^16.5.0
+        version: 16.5.0
       zod:
         specifier: ^3.25.67
         version: 3.25.67

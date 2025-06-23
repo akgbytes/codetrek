@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@repo/drizzle": "workspace:*",
+    "dotenv": "^16.5.0",
     "tsx": "^4.20.3"
   },
   "devDependencies": {

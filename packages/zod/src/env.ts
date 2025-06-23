@@ -1,10 +1,14 @@
 import { z } from "zod";
-// import { logger } from "@repo/logger";
+import { logger } from "@repo/utils";
+import path from "path";
+import { config } from "dotenv";
 
 enum NodeEnv {
   Development = "development",
   Production = "production",
 }
+
+config({ path: path.join(process.cwd(), ".env") });
 
 const envSchema = z.object({
   PORT: validNumber("PORT"),
@@ -18,13 +22,6 @@ const envSchema = z.object({
   ),
 
   RESEND_API_KEY: nonEmptyString("RESEND_API_KEY"),
-  MAILTRAP_HOST: nonEmptyString("MAILTRAP_HOST"),
-  MAILTRAP_PORT: validNumber("MAILTRAP_PORT"),
-  MAILTRAP_USERNAME: nonEmptyString(" MAILTRAP_USERNAME"),
-  MAILTRAP_PASSWORD: nonEmptyString("MAILTRAP_PASSWORD"),
-  MAILTRAP_SENDERMAIL: z
-    .string()
-    .email("MAILTRAP_SENDERMAIL must be a valid email"),
 
   CLOUDINARY_NAME: nonEmptyString("CLOUDINARY_NAME"),
   CLOUDINARY_API_KEY: nonEmptyString("CLOUDINARY_API_KEY"),
@@ -54,7 +51,7 @@ const createEnv = (env: NodeJS.ProcessEnv) => {
       .map((err) => `- ${err.message}`)
       .join("\n");
 
-    // logger.error(`Environment variable validation failed\n${messages}`);
+    logger.error(`Environment variable validation failed\n${messages}`);
     process.exit(1);
   }
 

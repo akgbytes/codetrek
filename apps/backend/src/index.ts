@@ -1,5 +1,5 @@
 import { connectDrizzle } from "@repo/drizzle";
 
-connectDrizzle();
+console.log("Hello World");
 
-console.log("hello world");
+connectDrizzle();
