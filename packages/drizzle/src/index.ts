@@ -1,3 +1,5 @@
+export * from "./db/schema";
+export * from "drizzle-orm";
 import { Pool } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { sql } from "drizzle-orm";

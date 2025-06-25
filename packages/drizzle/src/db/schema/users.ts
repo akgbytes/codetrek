@@ -8,6 +8,7 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { timestamps } from "../helpers";
+import { InferSelectModel } from "drizzle-orm";
 
 export const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
 export const providerEnum = pgEnum("provider", ["LOCAL", "GOOGLE", "GITHUB"]);
@@ -37,3 +38,5 @@ export const users = pgTable("users", {
   refreshToken: text("refresh_token"),
   ...timestamps,
 });
+
+export type User = InferSelectModel<typeof users>;
