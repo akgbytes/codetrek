@@ -1,4 +1,3 @@
-import { submissions } from "./../../../../packages/drizzle/src/db/schema/submissions";
 import { db, eq, problems } from "@repo/drizzle";
 import {
   ApiResponse,
@@ -9,7 +8,7 @@ import {
 } from "@repo/utils";
 import { handleZodError, validateProblemData } from "@repo/zod";
 import { RequestHandler } from "express";
-import { getLanguageId } from "../utils/judge0";
+import { validateReferenceSolution } from "../utils/judge0";
 
 export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
   const {
@@ -43,14 +42,7 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
   }
 
   for (const { language, solution } of referenceSolutions) {
-    const languageId = getLanguageId(language);
-
-    const submissions = testcases.map(({ input, output }) => ({
-      language_id: languageId,
-      source_code: solution,
-      stdin: input,
-      expected_output: output,
-    }));
+    await validateReferenceSolution(language, solution, testcases);
   }
 
   const [problem] = await db
@@ -72,11 +64,12 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
     })
     .returning();
 
-  logger.info(
-    `Problem with title '${problem?.title}' created successfully by ${userId}`
-  );
+  logger.info(`Problem '${problem!.title}' created by user ${userId}`);
 
-  res
-    .status(201)
-    .json(new ApiResponse(201, "Problem created successfully", problem));
+  res.status(201).json(
+    new ApiResponse(201, "Problem created successfully", {
+      id: problem!.id,
+      title: problem!.title,
+    })
+  );
 });
