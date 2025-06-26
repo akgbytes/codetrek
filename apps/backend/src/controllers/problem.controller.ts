@@ -1,3 +1,4 @@
+import { submissions } from "./../../../../packages/drizzle/src/db/schema/submissions";
 import { db, eq, problems } from "@repo/drizzle";
 import {
   ApiResponse,
@@ -8,6 +9,7 @@ import {
 } from "@repo/utils";
 import { handleZodError, validateProblemData } from "@repo/zod";
 import { RequestHandler } from "express";
+import { getLanguageId } from "../utils/judge0";
 
 export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
   const {
@@ -27,9 +29,8 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
 
   const { id: userId, role: userRole } = req.user;
 
-  if (userRole?.toUpperCase() !== UserRole.admin) {
-    logger.error("Unauthorized Request: User not authenticated");
-    throw new CustomError(403, "You are not allowed to create a problem");
+  if (userRole !== UserRole.admin) {
+    throw new CustomError(403, "You are not authorized to create a problem");
   }
 
   const [existing] = await db
@@ -38,7 +39,18 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
     .where(eq(problems.title, title));
 
   if (existing) {
-    throw new CustomError(409, "Problem already exists with same title");
+    throw new CustomError(409, "Problem already exists with the same title");
+  }
+
+  for (const { language, solution } of referenceSolutions) {
+    const languageId = getLanguageId(language);
+
+    const submissions = testcases.map(({ input, output }) => ({
+      language_id: languageId,
+      source_code: solution,
+      stdin: input,
+      expected_output: output,
+    }));
   }
 
   const [problem] = await db
