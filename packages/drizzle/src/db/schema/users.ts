@@ -10,8 +10,10 @@ import {
 import { timestamps } from "../helpers";
 import { InferSelectModel } from "drizzle-orm";
 
-export const roleEnum = pgEnum("role", ["USER", "ADMIN"]);
-export const providerEnum = pgEnum("provider", ["LOCAL", "GOOGLE", "GITHUB"]);
+import { UserRole, Provider } from "@repo/utils";
+
+export const roleEnum = pgEnum("role", UserRole);
+export const providerEnum = pgEnum("provider", Provider);
 
 export const users = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
