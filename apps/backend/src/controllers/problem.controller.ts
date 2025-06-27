@@ -4,13 +4,25 @@ import {
   asyncHandler,
   CustomError,
   logger,
+  omitUndefined,
   UserRole,
 } from "@repo/utils";
-import { handleZodError, validateProblemData } from "@repo/zod";
+import {
+  handleZodError,
+  parseUuid,
+  validateProblemData,
+  validateUpdateProblemData,
+} from "@repo/zod";
 import { RequestHandler } from "express";
 import { validateReferenceSolution } from "../utils/judge0";
 
 export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
+  const { id: userId, role: userRole } = req.user;
+
+  if (userRole !== UserRole.admin) {
+    throw new CustomError(403, "You are not authorized to create a problem");
+  }
+
   const {
     title,
     description,
@@ -25,12 +37,6 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
     referenceSolutions,
     testcases,
   } = handleZodError(validateProblemData(req.body));
-
-  const { id: userId, role: userRole } = req.user;
-
-  if (userRole !== UserRole.admin) {
-    throw new CustomError(403, "You are not authorized to create a problem");
-  }
 
   const [existing] = await db
     .select()
@@ -72,4 +78,52 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
       title: problem!.title,
     })
   );
+});
+
+export const updateProblem: RequestHandler = asyncHandler(async (req, res) => {
+  const userRole = req.user.role;
+
+  if (userRole !== UserRole.admin) {
+    throw new CustomError(403, "You are not authorized to update problems");
+  }
+
+  const { problemId } = req.params;
+  parseUuid(problemId, "Problem");
+
+  const payload = handleZodError(validateUpdateProblemData(req.body));
+
+  const updatePayload = omitUndefined(payload);
+
+  if (Object.keys(updatePayload).length === 0) {
+    throw new CustomError(400, "At least one field is required to update");
+  }
+
+  if (updatePayload.referenceSolutions && updatePayload.testcases) {
+    for (const { language, solution } of updatePayload.referenceSolutions) {
+      await validateReferenceSolution(
+        language,
+        solution,
+        updatePayload.testcases
+      );
+    }
+  } else if (updatePayload.referenceSolutions || updatePayload.testcases) {
+    // Reject if only one of them is provided
+    throw new CustomError(
+      400,
+      "Both referenceSolutions and testcases must be provided together"
+    );
+  }
+
+  const [updated] = await db
+    .update(problems)
+    .set({ ...updatePayload })
+    .where(eq(problems.id, problemId!))
+    .returning();
+
+  logger.info(`Problem with ID ${problemId} updated successfully`);
+
+  res.status(200).json({
+    message: "Problem updated successfully",
+    data: updated,
+  });
 });

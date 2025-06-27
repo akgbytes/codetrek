@@ -10,4 +10,5 @@ app.use(cookieParser());
 app.use(cors());
 
 import healthRoute from "./routes/health.route";
+
 app.use("/api/v1/health", healthRoute);

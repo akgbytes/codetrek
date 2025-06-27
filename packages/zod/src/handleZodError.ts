@@ -4,22 +4,19 @@ import { CustomError } from "@repo/utils";
 export const handleZodError = <T>(
   result: SafeParseReturnType<unknown, T>
 ): T => {
-  if (!result.success) {
-    const firstIssue = result.error.issues[0];
-    const path = firstIssue?.path.join(".");
+  if (result.success) return result.data;
 
-    if (
-      firstIssue?.code === "invalid_type" &&
-      firstIssue.received === "undefined"
-    ) {
-      throw new CustomError(
-        400,
-        path ? `Missing '${path}' field` : "Missing required fields"
-      );
-    }
+  const issue = result.error?.issues[0];
+  const path = issue?.path.join(".");
+  const isMissing =
+    issue?.code === "invalid_type" && issue.received === "undefined";
 
-    const message = path ? firstIssue?.message : firstIssue?.message;
-    throw new CustomError(422, message!);
-  }
-  return result.data;
+  throw new CustomError(
+    isMissing ? 400 : 422,
+    isMissing
+      ? path
+        ? `Missing '${path}' field`
+        : "Missing required fields"
+      : issue!.message
+  );
 };
