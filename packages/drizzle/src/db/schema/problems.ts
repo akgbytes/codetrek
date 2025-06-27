@@ -1,19 +1,16 @@
-import { sql } from "drizzle-orm";
 import {
   pgTable,
   text,
   boolean,
   uuid,
   pgEnum,
-  json,
-  PgTable,
   jsonb,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { timestamps } from "../helpers";
 import { Difficulty } from "@repo/utils";
 
-const difficultyEnum = pgEnum("difficulty", Difficulty);
+export const difficultyEnum = pgEnum("difficulty", Difficulty);
 
 export const problems = pgTable("problems", {
   id: uuid("id").defaultRandom().primaryKey(),

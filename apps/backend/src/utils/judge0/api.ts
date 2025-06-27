@@ -6,7 +6,7 @@ import { sleep } from "./utils";
 
 const headers = {
   "Content-Type": "application/json",
-  Authorization: `Bearer ${env.JUDGE0_API_KEY}`,
+  // Authorization: `Bearer ${env.JUDGE0_API_KEY}`,
 };
 
 export const createSubmissionBatch = async (

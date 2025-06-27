@@ -10,5 +10,9 @@ app.use(cookieParser());
 app.use(cors());
 
 import healthRoute from "./routes/health.route";
+import problemRoutes from "./routes/problem.route";
+import { errorHandler } from "./middlewares/error.middleware";
 
 app.use("/api/v1/health", healthRoute);
+app.use("/api/v1/problem", problemRoutes);
+app.use(errorHandler);

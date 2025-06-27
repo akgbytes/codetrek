@@ -5,7 +5,10 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { sql } from "drizzle-orm";
 import { logger } from "@repo/utils";
 import { env } from "@repo/zod";
-const pool = new Pool({ connectionString: env.DATABASE_URL! });
+
+const pool = new Pool({
+  connectionString: env.DATABASE_URL,
+});
 export const db = drizzle(pool);
 
 export const connectDrizzle = async () => {

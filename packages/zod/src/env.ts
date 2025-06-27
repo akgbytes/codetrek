@@ -1,14 +1,14 @@
 import { z } from "zod";
 import { logger } from "@repo/utils";
 import path from "path";
-import { config } from "dotenv";
+import { configDotenv } from "dotenv";
 
 enum NodeEnv {
   Development = "development",
   Production = "production",
 }
 
-config({ path: path.join(process.cwd(), ".env") });
+configDotenv({ path: path.resolve(__dirname, "../../../.env") });
 
 const envSchema = z.object({
   PORT: validNumber("PORT"),
