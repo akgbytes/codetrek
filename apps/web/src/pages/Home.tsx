@@ -1,4 +1,5 @@
 import HeroSection from "../components/HeroSection";
+import { FAQs } from "../components/ui/FAQs";
 import Features from "../components/ui/Features";
 
 const Home = () => {
@@ -9,8 +10,11 @@ const Home = () => {
         <h2 className="text-5xl font-bold mb-12 text-center text-white">
           Why coders choose <span className="text-lime-600">CodeTrek</span>
         </h2>
-
         <Features />
+        <h2 className="text-5xl font-bold mb-12 text-center text-white">
+          Frequently asked questions
+        </h2>
+        <FAQs />
       </div>
     </div>
   );

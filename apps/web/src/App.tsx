@@ -6,6 +6,7 @@ import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import { ToastContainer } from "react-toastify";
 import Navbar from "./components/Navbar";
+import { Footer } from "./components/Footer";
 
 const App = () => {
   return (
@@ -20,6 +21,7 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
+      <Footer />
       <ToastContainer />
     </div>
   );
