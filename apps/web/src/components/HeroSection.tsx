@@ -6,7 +6,7 @@ const HeroSection = () => {
   return (
     <section className="flex py-20 px-4 w-full space-x-24">
       <div className="text-left w-1/2">
-        <h1 className="text-6xl md:text-7xl font-bold mb-6">
+        <h1 className="text-5xl md:text-6xl font-bold mb-6">
           Master Code. <br />
           <span className="text-lime-600">Trek Far.</span> <br />
           Dominate.
@@ -14,7 +14,7 @@ const HeroSection = () => {
 
         <p className="text-base text-zinc-400 mb-8">
           Push your limits. Track your growth. Own your journey. Join a
-          community of developers, take on real challenges, and become the coder
+          community of coders, take on real challenges, and become the coder
           you’re meant to be.
         </p>
 
@@ -23,7 +23,7 @@ const HeroSection = () => {
             Start Coding
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
-          <Button className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 cursor-progress">
+          <Button className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 cursor-pointer">
             View Problems
           </Button>
         </div>
@@ -57,9 +57,7 @@ const HeroSection = () => {
             />
           </div>
 
-          <p className="font-semibold text-lime-50">
-            Joined by 1500+ developers
-          </p>
+          <p className="font-semibold text-lime-50">Joined by 1500+ coders</p>
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Recursive:wght@300..1000&display=swap");
 @source "../../../apps/**/*.{ts,tsx}";
 @source "../../../components/**/*.{ts,tsx}";
 @source "../**/*.{ts,tsx}";
@@ -121,5 +122,13 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: "Recursive", sans-serif;
+  }
+}
+
+@layer utilities {
+  .bg-dot-pattern {
+    background-image: radial-gradient(#fff 1px, transparent 1px);
+    background-size: 10px 10px;
   }
 }
