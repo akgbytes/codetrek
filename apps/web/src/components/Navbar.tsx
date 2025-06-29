@@ -30,7 +30,7 @@ const Navbar = () => {
             {false ? (
               <Button>Sign out</Button>
             ) : (
-              <Button className="bg-lime-600 cursor-pointer hover:bg-lime-700">
+              <Button className="bg-lime-600 cursor-pointer hover:bg-lime-600/90">
                 Sign in
               </Button>
             )}

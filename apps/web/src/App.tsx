@@ -11,13 +11,15 @@ const App = () => {
   return (
     <div className="min-h-[calc(100vh-1px)] flex flex-col bg-neutral-900 text-zinc-50">
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="h-full mx-auto w-full max-w-screen-xl px-2.5 md:px-20">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </div>
       <ToastContainer />
     </div>
   );
