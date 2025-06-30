@@ -1,0 +1,1 @@
+CREATE TYPE "public"."difficulty" AS ENUM('EASY', 'MEDIUM', 'HARD');
