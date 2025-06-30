@@ -24,7 +24,7 @@ export const users = pgTable("users", {
     "https://res.cloudinary.com/dmnh10etf/image/upload/v1750270944/default_epnleu.png"
   ),
   role: roleEnum("role").default("USER"),
-  password: text("password"),
+  passwordHash: text("password_hash"),
   provider: providerEnum("provider").default("LOCAL"),
 
   dailyProblemStreak: integer("daily_problem_streak").default(0),
@@ -33,8 +33,8 @@ export const users = pgTable("users", {
 
   forgotPasswordToken: text("forgot_password_token"),
   forgotPasswordExpiry: timestamp("forgot_password_expiry"),
-  emailVerificationToken: text("email_verification_token"),
-  emailVerificationExpiry: timestamp("email_verification_expiry"),
+  verificationToken: text("verification_token"),
+  verificationExpiry: timestamp("verification_expiry"),
 
   refreshToken: text("refresh_token"),
   ...timestamps,

@@ -1,5 +1,5 @@
 {
-  "id": "2e3cc89a-be49-4652-bc4a-418e1d5e79c5",
+  "id": "d8023777-69cb-4ba9-9df6-116ba74f7668",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -602,12 +602,6 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "username": {
-          "name": "username",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
         "fullname": {
           "name": "fullname",
           "type": "text",
@@ -641,8 +635,8 @@
           "notNull": false,
           "default": "'USER'"
         },
-        "password": {
-          "name": "password",
+        "password_hash": {
+          "name": "password_hash",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -686,15 +680,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "email_verification_token": {
-          "name": "email_verification_token",
+        "verification_token": {
+          "name": "verification_token",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "email_verification_expiry": {
-          "name": "email_verification_expiry",
-          "type": "text",
+        "verification_expiry": {
+          "name": "verification_expiry",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         },
@@ -723,13 +717,6 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "users_username_unique": {
-          "name": "users_username_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
-        },
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
@@ -1380,6 +1367,15 @@
       "values": [
         "ADMIN",
         "USER"
+      ]
+    },
+    "public.difficulty": {
+      "name": "difficulty",
+      "schema": "public",
+      "values": [
+        "EASY",
+        "MEDIUM",
+        "HARD"
       ]
     }
   },

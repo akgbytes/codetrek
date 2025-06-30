@@ -1,7 +1,7 @@
 CREATE TYPE "public"."contest_status" AS ENUM('UPCOMING', 'ONGOING', 'FINISHED');--> statement-breakpoint
 CREATE TYPE "public"."provider" AS ENUM('LOCAL', 'GITHUB', 'GOOGLE');--> statement-breakpoint
 CREATE TYPE "public"."role" AS ENUM('ADMIN', 'USER');--> statement-breakpoint
-CREATE TYPE "public"."difficulty" AS ENUM('HARD', 'MEDIUM', 'EASY');--> statement-breakpoint
+CREATE TYPE "public"."difficulty" AS ENUM('EASY', 'MEDIUM', 'HARD');--> statement-breakpoint
 CREATE TABLE "comments" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"discuss_id" uuid NOT NULL,
@@ -83,25 +83,23 @@ CREATE TABLE "discussion_upvotes" (
 --> statement-breakpoint
 CREATE TABLE "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"username" text NOT NULL,
 	"fullname" text NOT NULL,
 	"email" text NOT NULL,
 	"is_verified" boolean DEFAULT false,
 	"avatar" text DEFAULT 'https://res.cloudinary.com/dmnh10etf/image/upload/v1750270944/default_epnleu.png',
 	"role" "role" DEFAULT 'USER',
-	"password" text,
+	"password_hash" text,
 	"provider" "provider" DEFAULT 'LOCAL',
 	"daily_problem_streak" integer DEFAULT 0,
 	"is_streak_maintained" boolean DEFAULT false,
 	"last_submission_date" timestamp,
 	"forgot_password_token" text,
 	"forgot_password_expiry" timestamp,
-	"email_verification_token" text,
-	"email_verification_expiry" text,
+	"verification_token" text,
+	"verification_expiry" timestamp,
 	"refresh_token" text,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "users_username_unique" UNIQUE("username"),
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
