@@ -1,5 +1,5 @@
 {
-  "id": "d8023777-69cb-4ba9-9df6-116ba74f7668",
+  "id": "80e1a11e-20e8-4a23-b5b5-51e5a3abc34b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -686,8 +686,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "verification_expiry": {
-          "name": "verification_expiry",
+        "verification_token_expiry": {
+          "name": "verification_token_expiry",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false

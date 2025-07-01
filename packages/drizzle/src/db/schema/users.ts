@@ -34,7 +34,7 @@ export const users = pgTable("users", {
   forgotPasswordToken: text("forgot_password_token"),
   forgotPasswordExpiry: timestamp("forgot_password_expiry"),
   verificationToken: text("verification_token"),
-  verificationExpiry: timestamp("verification_expiry"),
+  verificationTokenExpiry: timestamp("verification_token_expiry"),
 
   refreshToken: text("refresh_token"),
   ...timestamps,

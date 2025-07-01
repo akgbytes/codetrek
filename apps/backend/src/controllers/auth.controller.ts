@@ -1,10 +1,17 @@
 import { ApiResponse, asyncHandler, CustomError, logger } from "@repo/utils";
 import { handleZodError, validateRegister } from "@repo/zod";
-import { db, eq, users } from "@repo/drizzle";
+import { and, db, eq, gt, users } from "@repo/drizzle";
 import { RequestHandler } from "express";
-import { generateToken, hashPassword } from "../utils/auth";
+import {
+  createHash,
+  generateAccessToken,
+  generateRefreshToken,
+  generateToken,
+  hashPassword,
+} from "../utils/auth";
 import { sendVerificationMail } from "../utils/sendMail";
 import { emailQueue } from "../queues/email.queue";
+import { generateCookieOptions } from "../configs/cookie";
 
 export const register: RequestHandler = asyncHandler(async (req, res) => {
   const { email, password, fullname } = handleZodError(
@@ -32,7 +39,7 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
       passwordHash,
       fullname,
       verificationToken: hashedToken,
-      verificationExpiry: tokenExpiry,
+      verificationTokenExpiry: tokenExpiry,
     })
     .returning({
       id: users.id,
@@ -78,4 +85,56 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
         user
       )
     );
+});
+
+export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) throw new CustomError(400, "Verification token is required");
+
+  const hashedToken = createHash(token);
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(
+      and(
+        eq(users.verificationToken, hashedToken),
+        gt(users.verificationTokenExpiry, new Date())
+      )
+    );
+
+  if (!user) {
+    throw new CustomError(
+      410,
+      "The verification link is invalid or has expired"
+    );
+  }
+
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+
+  const hashedRefreshToken = createHash(refreshToken);
+
+  await db
+    .update(users)
+    .set({
+      isVerified: true,
+      verificationToken: null,
+      verificationTokenExpiry: null,
+      refreshToken: hashedRefreshToken,
+    })
+    .where(eq(users.id, user.id));
+
+  logger.info("Email verified successfully", {
+    email: user.email,
+    userId: user.id,
+    ip: req.ip,
+  });
+
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, generateCookieOptions())
+    .cookie("refreshToken", refreshToken, generateCookieOptions())
+    .json(new ApiResponse(200, "Email verified successfully", null));
 });

@@ -96,7 +96,7 @@ CREATE TABLE "users" (
 	"forgot_password_token" text,
 	"forgot_password_expiry" timestamp,
 	"verification_token" text,
-	"verification_expiry" timestamp,
+	"verification_token_expiry" timestamp,
 	"refresh_token" text,
 	"updated_at" timestamp DEFAULT now() NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
