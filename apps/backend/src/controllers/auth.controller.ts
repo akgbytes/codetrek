@@ -3,7 +3,8 @@ import { handleZodError, validateRegister } from "@repo/zod";
 import { db, eq, users } from "@repo/drizzle";
 import { RequestHandler } from "express";
 import { generateToken, hashPassword } from "../utils/auth";
-import { sendVerificationMail } from "../utils/sendMail.ts";
+import { sendVerificationMail } from "../utils/sendMail";
+import { emailQueue } from "../queues/email.queue";
 
 export const register: RequestHandler = asyncHandler(async (req, res) => {
   const { email, password, fullname } = handleZodError(
@@ -46,6 +47,13 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
     logger.error("User insertion failed", { email });
     throw new CustomError(500, "User registration failed. Please try again.");
   }
+
+  emailQueue.add("sendVerifyEmail", {
+    type: "verify",
+    fullname: user.fullname,
+    email: user.email,
+    token: unHashedToken,
+  });
 
   await sendVerificationMail(user.fullname, user.email, unHashedToken);
 
