@@ -1,5 +1,5 @@
 import { SafeParseReturnType } from "zod";
-import { CustomError } from "@repo/utils";
+import { ApiError } from "@repo/utils";
 
 export const handleZodError = <T>(
   result: SafeParseReturnType<unknown, T>
@@ -11,7 +11,7 @@ export const handleZodError = <T>(
   const isMissing =
     issue?.code === "invalid_type" && issue.received === "undefined";
 
-  throw new CustomError(
+  throw new ApiError(
     isMissing ? 400 : 422,
     isMissing
       ? path

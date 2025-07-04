@@ -31,8 +31,8 @@ export const users = pgTable("users", {
   isStreakMaintained: boolean("is_streak_maintained").default(false),
   lastSubmissionDate: timestamp("last_submission_date"),
 
-  forgotPasswordToken: text("forgot_password_token"),
-  forgotPasswordExpiry: timestamp("forgot_password_expiry"),
+  resetPasswordToken: text("reset_password_token"),
+  resetPasswordExpiry: timestamp("reset_password_expiry"),
   verificationToken: text("verification_token"),
   verificationTokenExpiry: timestamp("verification_token_expiry"),
 

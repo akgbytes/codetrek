@@ -1,4 +1,4 @@
-import { CustomError, logger } from "@repo/utils";
+import { ApiError, logger } from "@repo/utils";
 import { env } from "@repo/zod";
 import { v2 as cloudinary } from "cloudinary";
 import fs from "fs/promises";
@@ -12,7 +12,7 @@ cloudinary.config({
 
 export const uploadOnCloudinary = async (localFilePath: string) => {
   if (!localFilePath) {
-    throw new CustomError(400, "No file path provided");
+    throw new ApiError(400, "No file path provided");
   }
 
   try {
@@ -22,7 +22,7 @@ export const uploadOnCloudinary = async (localFilePath: string) => {
 
     return response;
   } catch (error: any) {
-    throw new CustomError(500, error.message);
+    throw new ApiError(500, error.message);
   } finally {
     try {
       const absolutePath = path.resolve(localFilePath);

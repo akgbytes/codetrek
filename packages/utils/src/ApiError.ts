@@ -1,14 +1,14 @@
-export class CustomError extends Error {
-  data: null;
+export class ApiError<T = unknown> extends Error {
   success: boolean;
   constructor(
     public code: number,
-    message: string
+    message: string,
+    public data: T | null = null
   ) {
     super(message);
     this.success = false;
-    this.data = null;
-    this.name = "Custom Error";
+    this.data = data;
+    this.name = "Api Error";
     Error.captureStackTrace(this, this.constructor);
   }
 }

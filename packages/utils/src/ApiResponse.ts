@@ -1,9 +1,9 @@
-export class ApiResponse {
+export class ApiResponse<T> {
   public success: boolean;
   constructor(
     public code: number,
     public message: string,
-    public data: any
+    public data: T
   ) {
     this.success = code < 400;
   }

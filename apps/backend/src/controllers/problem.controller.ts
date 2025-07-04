@@ -2,7 +2,7 @@ import { db, eq, problems } from "@repo/drizzle";
 import {
   ApiResponse,
   asyncHandler,
-  CustomError,
+  ApiError,
   logger,
   omitUndefined,
   UserRole,
@@ -20,7 +20,7 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
   const { id: userId, role: userRole } = req.user;
 
   if (userRole !== UserRole.admin) {
-    throw new CustomError(403, "You are not authorized to create a problem");
+    throw new ApiError(403, "You are not authorized to create a problem");
   }
 
   const {
@@ -44,7 +44,7 @@ export const createProblem: RequestHandler = asyncHandler(async (req, res) => {
     .where(eq(problems.title, title));
 
   if (existing) {
-    throw new CustomError(409, "Problem already exists with the same title");
+    throw new ApiError(409, "Problem already exists with the same title");
   }
 
   for (const { language, solution } of referenceSolutions) {
@@ -84,7 +84,7 @@ export const updateProblem: RequestHandler = asyncHandler(async (req, res) => {
   const userRole = req.user.role;
 
   if (userRole !== UserRole.admin) {
-    throw new CustomError(403, "You are not authorized to update problems");
+    throw new ApiError(403, "You are not authorized to update problems");
   }
 
   const { problemId } = req.params;
@@ -95,7 +95,7 @@ export const updateProblem: RequestHandler = asyncHandler(async (req, res) => {
   const updatePayload = omitUndefined(payload);
 
   if (Object.keys(updatePayload).length === 0) {
-    throw new CustomError(400, "At least one field is required to update");
+    throw new ApiError(400, "At least one field is required to update");
   }
 
   if (updatePayload.referenceSolutions && updatePayload.testcases) {
@@ -108,7 +108,7 @@ export const updateProblem: RequestHandler = asyncHandler(async (req, res) => {
     }
   } else if (updatePayload.referenceSolutions || updatePayload.testcases) {
     // Reject if only one of them is provided
-    throw new CustomError(
+    throw new ApiError(
       400,
       "Both referenceSolutions and testcases must be provided together"
     );

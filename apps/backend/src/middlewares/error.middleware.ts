@@ -1,4 +1,4 @@
-import { CustomError, logger } from "@repo/utils";
+import { ApiError, logger } from "@repo/utils";
 import { Request, Response, NextFunction } from "express";
 
 export const errorHandler = (
@@ -8,28 +8,25 @@ export const errorHandler = (
   next: NextFunction
 ): void => {
   console.log("error from middleware: ", error);
-  let customError: CustomError;
+  let apiError: ApiError;
 
-  if (error instanceof CustomError) {
-    customError = error;
+  if (error instanceof ApiError) {
+    apiError = error;
   } else {
-    customError = new CustomError(
-      500,
-      error.message || "Internal Server Error"
-    );
+    apiError = new ApiError(500, error.message || "Internal Server Error");
   }
 
-  logger.error(customError.message, {
+  logger.error(apiError.message, {
     path: req.path,
     method: req.method,
     ip: req.ip,
-    stack: customError.stack || "",
+    stack: apiError.stack || "",
   });
 
-  res.status(customError.code).json({
-    code: customError.code,
-    message: customError.message,
-    data: customError.data,
-    success: customError.success,
+  res.status(apiError.code).json({
+    code: apiError.code,
+    message: apiError.message,
+    data: apiError.data,
+    success: apiError.success,
   });
 };

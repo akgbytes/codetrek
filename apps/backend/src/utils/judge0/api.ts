@@ -1,7 +1,7 @@
 import { env } from "@repo/zod";
 import { Submission, SubmissionResult, Token } from "./types";
 import axios from "axios";
-import { CustomError } from "@repo/utils";
+import { ApiError } from "@repo/utils";
 import { sleep } from "./utils";
 
 const headers = {
@@ -21,7 +21,7 @@ export const createSubmissionBatch = async (
     return data;
   } catch (error: any) {
     const message = error.message || "Unknown error";
-    throw new CustomError(500, `Failed to create submission batch: ${message}`);
+    throw new ApiError(500, `Failed to create submission batch: ${message}`);
   }
 };
 
@@ -49,17 +49,14 @@ export const pollSubmissionBatchResult = async (
       if (isAllDone) return results;
 
       if (Date.now() - startTime > timeout) {
-        throw new CustomError(
-          408,
-          "Polling timeout, submissions took too long"
-        );
+        throw new ApiError(408, "Polling timeout, submissions took too long");
       }
 
       await sleep(interval);
     }
   } catch (error: any) {
     const message = error.message || "Unknown error";
-    throw new CustomError(
+    throw new ApiError(
       500,
       `Error while polling submissions result: ${message}`
     );

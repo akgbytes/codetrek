@@ -1,7 +1,7 @@
 import { resend } from "./resendClient";
 import { mailGenerator } from "./mailGenerator";
 import { env } from "@repo/zod";
-import { CustomError } from "@repo/utils";
+import { ApiError } from "@repo/utils";
 import Mailgen from "mailgen";
 
 export const sendMail = async (
@@ -21,6 +21,6 @@ export const sendMail = async (
       text,
     });
   } catch (error) {
-    throw new CustomError(500, `Failed to send "${subject}" email.`);
+    throw new ApiError(500, `Failed to send "${subject}" email.`);
   }
 };

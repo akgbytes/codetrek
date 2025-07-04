@@ -1,4 +1,4 @@
-import { CustomError } from "@repo/utils";
+import { ApiError } from "@repo/utils";
 import { createSubmissionBatch, pollSubmissionBatchResult } from "./api";
 import { getLanguageId } from "./utils";
 
@@ -31,7 +31,7 @@ export const validateReferenceSolution = async (
       console.log("ffffffffffcckckkckckc\n\n\n");
       const errorMessage =
         result.stderr || result.compile_output || "No error output";
-      throw new CustomError(
+      throw new ApiError(
         400,
         `Submission ${idx + 1} failed: ${result.status.description} — ${errorMessage}`
       );
