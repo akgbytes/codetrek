@@ -2,6 +2,7 @@ import { ApiResponse, asyncHandler, CustomError, logger } from "@repo/utils";
 import {
   env,
   handleZodError,
+  validateEmail,
   validateLogin,
   validateRegister,
 } from "@repo/zod";
@@ -220,3 +221,52 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     .cookie("refreshToken", refreshToken, generateCookieOptions())
     .json(new ApiResponse(200, "Email verified successfully", null));
 });
+
+export const resendVerificationEmail: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const { email } = handleZodError(validateEmail(req.body));
+
+    const [user] = await db.select().from(users).where(eq(users.email, email));
+
+    if (!user) {
+      throw new CustomError(401, "No account found with this email address");
+    }
+
+    if (user.isVerified) {
+      throw new CustomError(400, "Email is already verified");
+    }
+
+    const { unHashedToken, hashedToken, tokenExpiry } = generateToken();
+
+    await db
+      .update(users)
+      .set({
+        verificationToken: hashedToken,
+        verificationTokenExpiry: tokenExpiry,
+      })
+      .where(eq(users.email, email));
+
+    emailQueue.add("sendVerifyEmail", {
+      type: "verify",
+      fullname: user.fullname,
+      email: user.email,
+      token: unHashedToken,
+    });
+
+    logger.info("Verification email resent", {
+      email,
+      userId: user.id,
+      ip: req.ip,
+    });
+
+    res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          "Verification mail sent successfully. Please check your inbox",
+          null
+        )
+      );
+  }
+);
