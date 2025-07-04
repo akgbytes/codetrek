@@ -1,5 +1,10 @@
 import { ApiResponse, asyncHandler, CustomError, logger } from "@repo/utils";
-import { handleZodError, validateLogin, validateRegister } from "@repo/zod";
+import {
+  env,
+  handleZodError,
+  validateLogin,
+  validateRegister,
+} from "@repo/zod";
 import { and, db, eq, gt, users } from "@repo/drizzle";
 import { RequestHandler } from "express";
 import {
@@ -126,6 +131,42 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions({ rememberMe }))
     .json(new ApiResponse(200, "Logged in successfully", null));
+});
+
+export const logout: RequestHandler = asyncHandler(async (req, res) => {
+  const { refreshToken } = req.cookies;
+  const { id, email } = req.user;
+
+  if (!refreshToken) {
+    throw new CustomError(400, "Refresh token is missing.");
+  }
+
+  await db
+    .update(users)
+    .set({
+      refreshToken: null,
+    })
+    .where(eq(users.id, id));
+
+  logger.info("User logged out successfully", {
+    email,
+    userId: id,
+    ip: req.ip,
+  });
+
+  res
+    .status(200)
+    .clearCookie("accessToken", {
+      httpOnly: true,
+      secure: env.NODE_ENV === "production",
+      sameSite: "strict",
+    })
+    .clearCookie("refreshToken", {
+      httpOnly: true,
+      secure: env.NODE_ENV === "production",
+      sameSite: "strict",
+    })
+    .json(new ApiResponse(200, "Logged out successfully", null));
 });
 
 export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
