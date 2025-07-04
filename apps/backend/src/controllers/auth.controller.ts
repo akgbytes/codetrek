@@ -1,5 +1,5 @@
 import { ApiResponse, asyncHandler, CustomError, logger } from "@repo/utils";
-import { handleZodError, validateRegister } from "@repo/zod";
+import { handleZodError, validateLogin, validateRegister } from "@repo/zod";
 import { and, db, eq, gt, users } from "@repo/drizzle";
 import { RequestHandler } from "express";
 import {
@@ -8,6 +8,7 @@ import {
   generateRefreshToken,
   generateToken,
   hashPassword,
+  passwordMatch,
 } from "../utils/auth";
 import { sendVerificationMail } from "../utils/sendMail";
 import { emailQueue } from "../queues/email.queue";
@@ -85,6 +86,46 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
         user
       )
     );
+});
+
+export const login: RequestHandler = asyncHandler(async (req, res) => {
+  const { email, password, rememberMe } = handleZodError(
+    validateLogin(req.body)
+  );
+
+  const [user] = await db.select().from(users).where(eq(users.email, email));
+
+  if (!user) throw new CustomError(401, "Invalid credentials");
+
+  const isPasswordCorrect = await passwordMatch(password, user.passwordHash!);
+  if (!isPasswordCorrect) throw new CustomError(401, "Invalid credentials");
+
+  if (!user.isVerified) {
+    throw new CustomError(401, "Please verify your email first");
+  }
+
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+  const hashedRefreshToken = createHash(refreshToken);
+
+  await db
+    .update(users)
+    .set({
+      refreshToken: hashedRefreshToken,
+    })
+    .where(eq(users.id, user.id));
+
+  logger.info("User logged in successfully", {
+    email,
+    userId: user.id,
+    ip: req.ip,
+  });
+
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, generateCookieOptions())
+    .cookie("refreshToken", refreshToken, generateCookieOptions({ rememberMe }))
+    .json(new ApiResponse(200, "Logged in successfully", null));
 });
 
 export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {

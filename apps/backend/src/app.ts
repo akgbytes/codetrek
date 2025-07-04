@@ -12,7 +12,9 @@ app.use(cors());
 import healthRoute from "./routes/health.route";
 import problemRoutes from "./routes/problem.route";
 import { errorHandler } from "./middlewares/error.middleware";
+import authRoutes from "./routes/auth.route";
 
 app.use("/api/v1/health", healthRoute);
+app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/problem", problemRoutes);
 app.use(errorHandler);
