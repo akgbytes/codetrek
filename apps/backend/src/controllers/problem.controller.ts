@@ -127,3 +127,58 @@ export const updateProblem: RequestHandler = asyncHandler(async (req, res) => {
     data: updated,
   });
 });
+
+export const deleteProblem: RequestHandler = asyncHandler(async (req, res) => {
+  const { problemId } = req.params;
+  if (!problemId) throw new ApiError(404, "ProblemId is required.");
+
+  parseUuid(problemId, "Problem");
+
+  const [deletedProblem] = await db
+    .delete(problems)
+    .where(eq(problems.id, problemId))
+    .returning();
+
+  logger.info(
+    `Problem '${deletedProblem!.title}' created by user ${req.user.id}`
+  );
+
+  res
+    .status(200)
+    .json(
+      new ApiResponse(200, "Problem deleted successfully.", deletedProblem)
+    );
+});
+
+export const getAllProblems: RequestHandler = asyncHandler(async (req, res) => {
+  const allProblems = await db.select().from(problems);
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, "All problems fetched successfully.", allProblems)
+    );
+});
+
+export const getProblemById: RequestHandler = asyncHandler(async (req, res) => {
+  const { problemId } = req.params;
+  if (!problemId) throw new ApiError(404, "ProblemId is required.");
+
+  parseUuid(problemId, "Problem");
+
+  const [problem] = await db
+    .select()
+    .from(problems)
+    .where(eq(problems.id, problemId));
+
+  if (!problem) throw new ApiError(404, "Invalid problem id");
+  res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        `Problem with ${problemId} fetched successfully.`,
+        problem
+      )
+    );
+});
