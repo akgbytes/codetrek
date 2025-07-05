@@ -5,6 +5,7 @@ import {
   validateEmail,
   validateLogin,
   validateRegister,
+  validateResetPassword,
 } from "@repo/zod";
 import { and, db, eq, gt, users } from "@repo/drizzle";
 import { RequestHandler } from "express";
@@ -33,7 +34,7 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
     .where(eq(users.email, email));
 
   if (existingUser) {
-    throw new ApiError(409, "Email is already registered");
+    throw new ApiError(409, "Email is already registered.");
   }
 
   const passwordHash = await hashPassword(password);
@@ -101,13 +102,13 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
 
   const [user] = await db.select().from(users).where(eq(users.email, email));
 
-  if (!user) throw new ApiError(401, "Invalid credentials");
+  if (!user) throw new ApiError(401, "Invalid credentials.");
 
   const isPasswordCorrect = await passwordMatch(password, user.passwordHash!);
-  if (!isPasswordCorrect) throw new ApiError(401, "Invalid credentials");
+  if (!isPasswordCorrect) throw new ApiError(401, "Invalid credentials.");
 
   if (!user.isVerified) {
-    throw new ApiError(401, "Please verify your email first");
+    throw new ApiError(401, "Please verify your email first.");
   }
 
   const accessToken = generateAccessToken(user);
@@ -131,7 +132,7 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions({ rememberMe }))
-    .json(new ApiResponse(200, "Logged in successfully", null));
+    .json(new ApiResponse(200, "Logged in successfully.", null));
 });
 
 export const logout: RequestHandler = asyncHandler(async (req, res) => {
@@ -167,13 +168,13 @@ export const logout: RequestHandler = asyncHandler(async (req, res) => {
       secure: env.NODE_ENV === "production",
       sameSite: "strict",
     })
-    .json(new ApiResponse(200, "Logged out successfully", null));
+    .json(new ApiResponse(200, "Logged out successfully.", null));
 });
 
 export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
   const { token } = req.params;
 
-  if (!token) throw new ApiError(400, "Verification token is required");
+  if (!token) throw new ApiError(400, "Verification token is required.");
 
   const hashedToken = createHash(token);
 
@@ -188,7 +189,7 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     );
 
   if (!user) {
-    throw new ApiError(410, "The verification link is invalid or has expired");
+    throw new ApiError(410, "The verification link is invalid or has expired.");
   }
 
   const accessToken = generateAccessToken(user);
@@ -216,7 +217,7 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions())
-    .json(new ApiResponse(200, "Email verified successfully", null));
+    .json(new ApiResponse(200, "Email verified successfully.", null));
 });
 
 export const resendVerificationEmail: RequestHandler = asyncHandler(
@@ -226,11 +227,11 @@ export const resendVerificationEmail: RequestHandler = asyncHandler(
     const [user] = await db.select().from(users).where(eq(users.email, email));
 
     if (!user) {
-      throw new ApiError(401, "No account found with this email address");
+      throw new ApiError(401, "No account found with this email address.");
     }
 
     if (user.isVerified) {
-      throw new ApiError(400, "Email is already verified");
+      throw new ApiError(400, "Email is already verified.");
     }
 
     const { unHashedToken, hashedToken, tokenExpiry } = generateToken();
@@ -261,7 +262,7 @@ export const resendVerificationEmail: RequestHandler = asyncHandler(
       .json(
         new ApiResponse(
           200,
-          "Verification mail sent successfully. Please check your inbox",
+          "Verification mail sent successfully. Please check your inbox.",
           null
         )
       );
@@ -279,7 +280,7 @@ export const forgotPassword: RequestHandler = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          "If an account exists, a reset link has been sent to the email",
+          "If an account exists, a reset link has been sent to the email.",
           null
         )
       );
@@ -322,8 +323,59 @@ export const forgotPassword: RequestHandler = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        "If an account exists, a reset link has been sent to the email",
+        "If an account exists, a reset link has been sent to the email.",
         null
       )
     );
+});
+
+export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = handleZodError(validateResetPassword(req.body));
+
+  if (!token) {
+    throw new ApiError(400, "Password reset token is missing.");
+  }
+
+  const hashedToken = createHash(token);
+
+  const [user] = await db
+    .select()
+    .from(users)
+    .where(
+      and(
+        eq(users.resetPasswordToken, hashedToken),
+        gt(users.resetPasswordExpiry, new Date())
+      )
+    );
+
+  if (!user) {
+    throw new ApiError(410, "Reset link has expired or is invalid.");
+  }
+
+  const isSame = await passwordMatch(password, user.passwordHash!);
+  if (isSame) {
+    throw new ApiError(400, "Password must be different from old password.");
+  }
+
+  const hashedPassword = await hashPassword(password);
+
+  await db
+    .update(users)
+    .set({
+      passwordHash: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpiry: null,
+    })
+    .where(eq(users.id, user.id));
+
+  logger.info("Password reset successful", {
+    email: user.email,
+    userId: user.id,
+    ip: req.ip,
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Password reset successfully.", null));
 });

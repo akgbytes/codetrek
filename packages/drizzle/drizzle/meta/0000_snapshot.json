@@ -1,5 +1,5 @@
 {
-  "id": "80e1a11e-20e8-4a23-b5b5-51e5a3abc34b",
+  "id": "9e69caee-e410-456b-8ff4-8a51899c0ec5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -668,14 +668,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "forgot_password_token": {
-          "name": "forgot_password_token",
+        "reset_password_token": {
+          "name": "reset_password_token",
           "type": "text",
           "primaryKey": false,
           "notNull": false
         },
-        "forgot_password_expiry": {
-          "name": "forgot_password_expiry",
+        "reset_password_expiry": {
+          "name": "reset_password_expiry",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
