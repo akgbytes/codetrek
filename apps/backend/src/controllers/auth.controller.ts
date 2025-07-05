@@ -1,3 +1,4 @@
+import jwt from "jsonwebtoken";
 import { ApiResponse, asyncHandler, ApiError, logger } from "@repo/utils";
 import {
   env,
@@ -132,6 +133,7 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions({ rememberMe }))
+    .cookie("rememberMe", rememberMe, generateCookieOptions({ rememberMe }))
     .json(new ApiResponse(200, "Logged in successfully.", null));
 });
 
@@ -217,6 +219,7 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions())
+    .cookie("rememberMe", false, generateCookieOptions({ rememberMe: true }))
     .json(new ApiResponse(200, "Email verified successfully.", null));
 });
 
@@ -379,3 +382,53 @@ export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .json(new ApiResponse(200, "Password reset successfully.", null));
 });
+
+export const refreshAccessToken: RequestHandler = asyncHandler(
+  async (req, res) => {
+    const { refreshToken: incomingRefreshToken, rememberMe } = req.cookies;
+    if (!incomingRefreshToken) {
+      throw new ApiError(401, "Refresh token is missing.");
+    }
+
+    const user = req.user;
+    let decoded;
+    try {
+      decoded = jwt.verify(incomingRefreshToken, env.REFRESH_TOKEN_SECRET);
+    } catch (err) {
+      throw new ApiError(401, "Invalid or expired refresh token");
+    }
+
+    const hashedIncoming = createHash(incomingRefreshToken);
+
+    const [isRefreshTokenValid] = await db
+      .select()
+      .from(users)
+      .where(eq(users.refreshToken, hashedIncoming));
+
+    if (!isRefreshTokenValid) {
+      throw new ApiError(401, "Refresh token has been used or is invalid.");
+    }
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    const newHashed = createHash(refreshToken);
+
+    await db
+      .update(users)
+      .set({ refreshToken: newHashed })
+      .where(eq(users.refreshToken, newHashed));
+
+    logger.info("Access token refreshed");
+
+    res
+      .status(200)
+      .cookie("accessToken", accessToken, generateCookieOptions())
+      .cookie(
+        "refreshToken",
+        refreshToken,
+        generateCookieOptions({ rememberMe })
+      )
+      .cookie("rememberMe", rememberMe, generateCookieOptions({ rememberMe }))
+      .json(new ApiResponse(200, "Access token refreshed successfully", null));
+  }
+);
