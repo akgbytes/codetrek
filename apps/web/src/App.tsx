@@ -9,6 +9,7 @@ import MainLayout from "./components/layout/MainLayout";
 import AuthLayout from "./components/layout/AuthLayout";
 import AdminRoute from "./components/routes/AdminRoute";
 import HomeLayout from "./components/layout/HomeLayout";
+import ResendVerification from "./pages/ResendVerification";
 
 const App = () => {
   return (
@@ -28,6 +29,7 @@ const App = () => {
         <Route element={<AuthLayout />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/resend" element={<ResendVerification />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
