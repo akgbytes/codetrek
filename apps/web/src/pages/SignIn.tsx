@@ -176,7 +176,7 @@ const SignIn = () => {
                   Don't have an account?{" "}
                 </span>
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"
                 >
                   Sign up

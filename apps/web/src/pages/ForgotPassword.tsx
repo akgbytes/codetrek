@@ -91,7 +91,7 @@ const ForgotPassword = () => {
             <div className="text-center space-y-1">
               <p className="text-zinc-300/60 text-sm">
                 <Link
-                  to="/login"
+                  to="/signin"
                   className="hover:text-lime-600 inline-flex items-center"
                 >
                   <ArrowLeft className="h-4 w-4 mr-1" />
@@ -101,7 +101,7 @@ const ForgotPassword = () => {
               <p className="text-zinc-300/60 text-sm">
                 Don't have an account?{" "}
                 <Link
-                  to="/register"
+                  to="/signup"
                   className="text-zinc-100 hover:underline hover:text-lime-600"
                 >
                   Sign up

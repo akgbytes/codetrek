@@ -30,7 +30,7 @@ const App = () => {
         <Route element={<AuthLayout />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
-          <Route path="/resend-email" element={<ResendVerification />} />
+          <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="*" element={<NotFound />} />
         </Route>

@@ -19,10 +19,18 @@ const Navbar = () => {
           </Link>
 
           <div className="h-full flex items-center space-x-6">
-            <Link to="">Problems</Link>
-            <Link to="">Contests</Link>
-            <Link to="">Discuss</Link>
-            <Link to="">Sheets</Link>
+            <Link to="" className="hover:text-lime-600">
+              Problems
+            </Link>
+            <Link to="" className="hover:text-lime-600">
+              Contests
+            </Link>
+            <Link to="" className="hover:text-lime-600">
+              Discuss
+            </Link>
+            <Link to="" className="hover:text-lime-600">
+              Sheets
+            </Link>
           </div>
 
           <div className="h-full flex items-center space-x-4">
