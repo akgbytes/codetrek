@@ -14,6 +14,11 @@ import { Button } from "@repo/ui/components/button";
 import { Link } from "react-router-dom";
 import type { RegisterData } from "@repo/zod";
 import { GoogleLogin } from "@react-oauth/google";
+import {
+  useGoogleLoginMutation,
+  useRegisterMutation,
+} from "../services/authApi";
+import { toast } from "react-toastify";
 
 const SignUp = () => {
   const {
@@ -24,9 +29,21 @@ const SignUp = () => {
 
   const [showPassword, setShowPassword] = useState(false);
 
-  const isLoading = false;
+  const [registerUser, { isLoading }] = useRegisterMutation();
+  const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
 
-  const onSubmit: SubmitHandler<RegisterData> = async (data) => {};
+  const onSubmit: SubmitHandler<RegisterData> = async (data) => {
+    try {
+      const response = await registerUser(data).unwrap();
+      console.log("register response : ", response);
+      toast.success(response.message || "Registration successful");
+    } catch (error: any) {
+      console.log("register error : ", error);
+      toast.error(
+        error.data?.message || "Registration failed. Please try again."
+      );
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center">

@@ -86,4 +86,5 @@ const authApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useLoginMutation } = authApi;
+export const { useRegisterMutation, useLoginMutation, useGoogleLoginMutation } =
+  authApi;
