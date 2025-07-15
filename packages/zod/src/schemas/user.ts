@@ -18,14 +18,10 @@ const registerSchema = z.object({
     .max(50, { message: "Fullname must be at most 50 characters long" }),
 });
 
-const loginSchema = registerSchema
-  .pick({
-    email: true,
-    password: true,
-  })
-  .extend({
-    rememberMe: z.boolean().default(false),
-  });
+const loginSchema = registerSchema.pick({
+  email: true,
+  password: true,
+});
 
 const emailSchema = registerSchema.pick({
   email: true,

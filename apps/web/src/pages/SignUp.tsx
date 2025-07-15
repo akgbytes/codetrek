@@ -175,8 +175,9 @@ const SignUp = () => {
                 theme="outline"
                 text="continue_with"
                 width={"400px"}
-                onSuccess={async (credentialResponse) => {
+                onSuccess={async (credentialToken) => {
                   try {
+                    // const response = await googleLogin(credentialToken)
                   } catch (error: any) {}
                 }}
                 onError={() => {}}

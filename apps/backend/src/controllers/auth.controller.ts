@@ -21,6 +21,7 @@ import {
 import { sendVerificationMail } from "../utils/sendMail";
 import { emailQueue } from "../queues/email.queue";
 import { generateCookieOptions } from "../configs/cookie";
+import { verifyGoogleToken } from "../utils/auth/verifyGoogleToken";
 
 export const register: RequestHandler = asyncHandler(async (req, res) => {
   const { email, password, fullname } = handleZodError(
@@ -97,9 +98,7 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
 });
 
 export const login: RequestHandler = asyncHandler(async (req, res) => {
-  const { email, password, rememberMe } = handleZodError(
-    validateLogin(req.body)
-  );
+  const { email, password } = handleZodError(validateLogin(req.body));
 
   const [user] = await db.select().from(users).where(eq(users.email, email));
 
@@ -132,8 +131,7 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
   res
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
-    .cookie("refreshToken", refreshToken, generateCookieOptions({ rememberMe }))
-    .cookie("rememberMe", rememberMe, generateCookieOptions({ rememberMe }))
+    .cookie("refreshToken", refreshToken, generateCookieOptions())
     .json(new ApiResponse(200, "Logged in successfully.", null));
 });
 
@@ -219,7 +217,6 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions())
-    .cookie("rememberMe", false, generateCookieOptions({ rememberMe: true }))
     .json(new ApiResponse(200, "Email verified successfully.", null));
 });
 
@@ -385,7 +382,7 @@ export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
 
 export const refreshAccessToken: RequestHandler = asyncHandler(
   async (req, res) => {
-    const { refreshToken: incomingRefreshToken, rememberMe } = req.cookies;
+    const { refreshToken: incomingRefreshToken } = req.cookies;
     if (!incomingRefreshToken) {
       throw new ApiError(401, "Refresh token is missing.");
     }
@@ -423,12 +420,70 @@ export const refreshAccessToken: RequestHandler = asyncHandler(
     res
       .status(200)
       .cookie("accessToken", accessToken, generateCookieOptions())
-      .cookie(
-        "refreshToken",
-        refreshToken,
-        generateCookieOptions({ rememberMe })
-      )
-      .cookie("rememberMe", rememberMe, generateCookieOptions({ rememberMe }))
+      .cookie("refreshToken", refreshToken, generateCookieOptions())
       .json(new ApiResponse(200, "Access token refreshed successfully", null));
   }
 );
+
+export const googleLogin: RequestHandler = asyncHandler(async (req, res) => {
+  const { token } = req.body;
+
+  const payload = await verifyGoogleToken(token);
+
+  const { email, name, picture } = payload;
+
+  if (!email || !name || !picture) {
+    throw new ApiError(200, "");
+  }
+
+  const [existingUser] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      fullname: users.fullname,
+      avatar: users.avatar,
+      role: users.role,
+      isVerified: users.isVerified,
+    })
+    .from(users)
+    .where(eq(users.email, email));
+
+  let user: any = existingUser;
+
+  if (!existingUser) {
+    user = await db
+      .insert(users)
+      .values({
+        email,
+        fullname: name,
+        avatar: picture,
+        isVerified: true,
+        provider: "GOOGLE",
+      })
+      .returning({
+        id: users.id,
+        email: users.email,
+        fullname: users.fullname,
+        avatar: users.avatar,
+        role: users.role,
+        isVerified: users.isVerified,
+      });
+  }
+
+  const accessToken = generateAccessToken(user);
+  const refreshToken = generateRefreshToken(user);
+  const hashedRefreshToken = createHash(refreshToken);
+
+  await db
+    .update(users)
+    .set({ refreshToken: hashedRefreshToken })
+    .where(eq(users.id, user?.id));
+
+  logger.info(`${email} logged in via Google`);
+
+  res
+    .status(200)
+    .cookie("accessToken", accessToken, generateCookieOptions())
+    .cookie("refreshToken", refreshToken, generateCookieOptions())
+    .json(new ApiResponse(200, "Google login successful", null));
+});
