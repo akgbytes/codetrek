@@ -22,7 +22,7 @@ export const baseQueryWithReauth: BaseQueryFn<
     result.error?.status === 401 &&
     (result.error.data as { message?: string })?.message === "TokenExpiredError"
   ) {
-    await baseQuery(`${AUTH_PATH}/refresh-token`, api, extraOptions);
+    await baseQuery(`${AUTH_PATH}/refresh`, api, extraOptions);
     result = await baseQuery(args, api, extraOptions);
   }
 

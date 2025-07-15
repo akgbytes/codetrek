@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "./src/index.ts",
-  "type": "module",
+  "type": "commonjs",
   "exports": {
-    ".": "./src/index.ts"
+    "default": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "author": "akgbytes",
   "license": "ISC",

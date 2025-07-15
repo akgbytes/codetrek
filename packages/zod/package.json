@@ -4,10 +4,11 @@
   "description": "",
   "author": "akgbytes@gmail.com",
   "license": "ISC",
-  "type": "module",
+  "type": "commonjs",
   "main": "./src/index.ts",
   "exports": {
-    ".": "./src/index.ts"
+    "default": "./dist/index.js",
+    "types": "./dist/index.d.ts"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",

@@ -7,7 +7,12 @@ export const app: Express = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 import healthRoute from "./routes/health.route";
 import problemRoutes from "./routes/problem.route";

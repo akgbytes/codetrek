@@ -15,7 +15,7 @@ export const emailVerificationMailContent = (
 ) => ({
   body: {
     name: fullName,
-    intro: "Welcome to Codetrek! We're excited to have you on board.",
+    intro: "Welcome to Codetrek! We're excited to have you onboard.",
     action: {
       instructions:
         "To complete your registration, please verify your email by clicking below:",

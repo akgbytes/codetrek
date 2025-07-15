@@ -2,11 +2,12 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "build": "tsc -b",
     "dev": "tsx watch src/index.ts",
     "worker:email": "node dist/workers/email.worker.js",
+    "worker:email-dev": "tsx watch src/workers/email.worker.ts",
     "start": "node dist/index.js"
   },
   "dependencies": {
