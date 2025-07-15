@@ -4,13 +4,13 @@ import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import NotFound from "./pages/NotFound";
-import { ToastContainer } from "react-toastify";
 import MainLayout from "./components/layout/MainLayout";
 import AuthLayout from "./components/layout/AuthLayout";
 import AdminRoute from "./components/routes/AdminRoute";
 import HomeLayout from "./components/layout/HomeLayout";
 import ResendVerification from "./pages/ResendVerification";
 import ForgotPassword from "./pages/ForgotPassword";
+import { Toaster } from "@repo/ui/components/sonner";
 
 const App = () => {
   return (
@@ -36,7 +36,7 @@ const App = () => {
         </Route>
       </Routes>
 
-      <ToastContainer />
+      <Toaster position="top-right" richColors={true} theme="light" />
     </div>
   );
 };

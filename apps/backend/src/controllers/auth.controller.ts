@@ -485,5 +485,34 @@ export const googleLogin: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions())
-    .json(new ApiResponse(200, "Google login successful", null));
+    .json(new ApiResponse(200, "Logged in via Google successfully", null));
+});
+
+export const getProfile: RequestHandler = asyncHandler(async (req, res) => {
+  const { id } = req.user;
+  const [user] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      fullname: users.fullname,
+      avatar: users.avatar,
+      role: users.role,
+      isVerified: users.isVerified,
+    })
+    .from(users)
+    .where(eq(users.id, id));
+
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+
+  logger.info("User profile fetched", {
+    email: user.email,
+    userId: user.id,
+    ip: req.ip,
+  });
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "User profile fetched successfully", user));
 });

@@ -11,14 +11,17 @@ import { Eye, EyeOff, Loader, Lock, Mail, User, UserPlus } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { RegisterData } from "@repo/zod";
 import { GoogleLogin } from "@react-oauth/google";
 import {
   useGoogleLoginMutation,
+  useLazyGetProfileQuery,
   useRegisterMutation,
 } from "../services/authApi";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
+import { useAppDispatch } from "../hooks";
+import { setCredentials } from "../store/features/authSlice";
 
 const SignUp = () => {
   const {
@@ -28,15 +31,21 @@ const SignUp = () => {
   } = useForm<RegisterData>();
 
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const [registerUser, { isLoading }] = useRegisterMutation();
   const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
+  const [registerUser, { isLoading }] = useRegisterMutation();
+  const [getProfile] = useLazyGetProfileQuery();
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     try {
       const response = await registerUser(data).unwrap();
       console.log("register response : ", response);
-      toast.success(response.message || "Registration successful");
+      toast.success(
+        response.message || "Registration successful. Please verify your email."
+      );
+      navigate("/login");
     } catch (error: any) {
       console.log("register error : ", error);
       toast.error(
@@ -58,6 +67,53 @@ const SignUp = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="flex items-center justify-center w-full">
+              <GoogleLogin
+                theme="outline"
+                text="continue_with"
+                width={"400px"}
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    const response = await googleLogin({
+                      token: credentialResponse.credential!,
+                    }).unwrap();
+
+                    console.log("google login response : ", response);
+
+                    const profileResponse = await getProfile().unwrap();
+                    dispatch(
+                      setCredentials({
+                        user: profileResponse.data,
+                      })
+                    );
+
+                    toast.success(
+                      response.message || "Logged in via Google successfully"
+                    );
+                    navigate("/dashboard");
+                  } catch (error: any) {
+                    console.log("google login error : ", error);
+                    toast.error(
+                      error.data?.message ||
+                        "Login with Google failed. Please try again."
+                    );
+                  }
+                }}
+                onError={() => {
+                  toast.error("Login with Google failed. Please try again.");
+                }}
+              />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-zinc-400" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-neutral-900 px-2 text-zinc-300/70">Or</span>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-zinc-50">
@@ -145,7 +201,7 @@ const SignUp = () => {
                 type="submit"
                 className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
                 variant={"outline"}
-                disabled={isLoading}
+                disabled={isLoading || googleLoading}
               >
                 {isLoading ? (
                   <>
@@ -160,29 +216,6 @@ const SignUp = () => {
                 )}
               </Button>
             </form>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-zinc-400" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-neutral-900 px-2 text-zinc-300/70">Or</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center w-full">
-              <GoogleLogin
-                theme="outline"
-                text="continue_with"
-                width={"400px"}
-                onSuccess={async (credentialToken) => {
-                  try {
-                    // const response = await googleLogin(credentialToken)
-                  } catch (error: any) {}
-                }}
-                onError={() => {}}
-              />
-            </div>
 
             <div className="text-center text-sm">
               <span className="text-zinc-300/60">

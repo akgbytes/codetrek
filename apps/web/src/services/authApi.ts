@@ -34,16 +34,20 @@ const authApi = api.injectEndpoints({
       invalidatesTags: ["User"],
     }),
 
-    googleLogin: builder.mutation<
-      ApiResponse<null>,
-      { token: string; rememberMe?: boolean }
-    >({
+    googleLogin: builder.mutation<ApiResponse<null>, { token: string }>({
       query: (data) => ({
         url: `${AUTH_PATH}/login/google`,
         method: "POST",
         body: data,
       }),
       invalidatesTags: ["User"],
+    }),
+
+    getProfile: builder.query<ApiResponse<User>, void>({
+      query: () => ({
+        url: `${AUTH_PATH}/me`,
+        method: "GET",
+      }),
     }),
 
     verifyEmail: builder.query<ApiResponse<null>, string>({
@@ -86,5 +90,9 @@ const authApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const { useRegisterMutation, useLoginMutation, useGoogleLoginMutation } =
-  authApi;
+export const {
+  useRegisterMutation,
+  useLoginMutation,
+  useGoogleLoginMutation,
+  useLazyGetProfileQuery,
+} = authApi;

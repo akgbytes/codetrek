@@ -12,9 +12,17 @@ import { Eye, EyeOff, Loader, Lock, LogIn, Mail } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import type { LoginData } from "@repo/zod";
 import { GoogleLogin } from "@react-oauth/google";
+import { useAppDispatch } from "../hooks";
+import {
+  useGoogleLoginMutation,
+  useLazyGetProfileQuery,
+  useLoginMutation,
+} from "../services/authApi";
+import { setCredentials } from "../store/features/authSlice";
+import { toast } from "sonner";
 
 const SignIn = () => {
   const {
@@ -24,11 +32,33 @@ const SignIn = () => {
   } = useForm<LoginData>();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
 
-  const isLoading = false;
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<LoginData> = async (data) => {};
+  const [loginUser, { isLoading }] = useLoginMutation();
+  const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
+  const [getProfile] = useLazyGetProfileQuery();
+
+  const onSubmit: SubmitHandler<LoginData> = async (data) => {
+    try {
+      const response = await loginUser(data).unwrap();
+      console.log("login response : ", response);
+
+      const profileResponse = await getProfile().unwrap();
+      dispatch(
+        setCredentials({
+          user: profileResponse.data,
+        })
+      );
+
+      toast.success(response.message || "Logged in successfully");
+      navigate("/dashboard");
+    } catch (error: any) {
+      console.log("register error : ", error);
+      toast.error(error.data?.message || "Login failed. Please try again.");
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -43,6 +73,53 @@ const SignIn = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            <div className="flex items-center justify-center w-full">
+              <GoogleLogin
+                theme="outline"
+                text="continue_with"
+                width={"400px"}
+                onSuccess={async (credentialResponse) => {
+                  try {
+                    const response = await googleLogin({
+                      token: credentialResponse.credential!,
+                    }).unwrap();
+
+                    console.log("google login response : ", response);
+
+                    const profileResponse = await getProfile().unwrap();
+                    dispatch(
+                      setCredentials({
+                        user: profileResponse.data,
+                      })
+                    );
+
+                    toast.success(
+                      response.message || "Logged in via Google successfully"
+                    );
+                    navigate("/dashboard");
+                  } catch (error: any) {
+                    console.log("google login error : ", error);
+                    toast.error(
+                      error.data?.message ||
+                        "Login with Google failed. Please try again."
+                    );
+                  }
+                }}
+                onError={() => {
+                  toast.error("Login with Google failed. Please try again.");
+                }}
+              />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-zinc-400" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-neutral-900 px-2 text-zinc-300/70">Or</span>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-zinc-50">
@@ -103,23 +180,7 @@ const SignIn = () => {
                 )}
               </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    className=""
-                    id="rememberMe"
-                    checked={rememberMe}
-                    onCheckedChange={(checked) =>
-                      setRememberMe(checked as boolean)
-                    }
-                  />
-                  <Label
-                    htmlFor="rememberMe"
-                    className="text-sm text-zinc-300/90 cursor-pointer font-normal"
-                  >
-                    Remember me
-                  </Label>
-                </div>
+              <div className="flex items-center justify-end">
                 <Link
                   to="/forgot-password"
                   className="text-sm text-zinc-300/90 hover:text-lime-600"
@@ -132,7 +193,7 @@ const SignIn = () => {
                 type="submit"
                 className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
                 variant={"outline"}
-                disabled={isLoading}
+                disabled={isLoading || googleLoading}
               >
                 {isLoading ? (
                   <>
@@ -147,28 +208,6 @@ const SignIn = () => {
                 )}
               </Button>
             </form>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-zinc-400" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-neutral-900 px-2 text-zinc-300/70">Or</span>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center w-full">
-              <GoogleLogin
-                theme="outline"
-                text="continue_with"
-                width={"400px"}
-                onSuccess={async (credentialResponse) => {
-                  try {
-                  } catch (error: any) {}
-                }}
-                onError={() => {}}
-              />
-            </div>
 
             <div className="flex flex-col gap-2">
               <div className="text-center text-sm">
