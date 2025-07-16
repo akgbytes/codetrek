@@ -210,9 +210,7 @@ const SignIn = () => {
 
             <div className="flex flex-col gap-2">
               <div className="text-center text-sm">
-                <span className="text-zinc-300/60">
-                  Don't have an account?{" "}
-                </span>
+                <span className="text-zinc-400">Don't have an account? </span>
                 <Link
                   to="/signup"
                   className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"
@@ -221,7 +219,7 @@ const SignIn = () => {
                 </Link>
               </div>
               <div className="text-center text-sm">
-                <span className="text-zinc-300/60">
+                <span className="text-zinc-400">
                   Need to verify your email?{" "}
                 </span>
                 <Link

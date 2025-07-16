@@ -218,9 +218,7 @@ const SignUp = () => {
             </form>
 
             <div className="text-center text-sm">
-              <span className="text-zinc-300/60">
-                Already have an account?{" "}
-              </span>
+              <span className="text-zinc-400">Already have an account? </span>
               <Link
                 to="/signin"
                 className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"

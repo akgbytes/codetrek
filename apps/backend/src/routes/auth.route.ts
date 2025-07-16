@@ -11,6 +11,7 @@ import {
   forgotPassword,
   getProfile,
 } from "../controllers/auth.controller";
+import { isLoggedIn } from "../middlewares/auth.middleware";
 
 const router: Router = Router();
 
@@ -23,6 +24,6 @@ router.post("/email/resend", resendVerificationEmail);
 router.post("/password/forgot", forgotPassword);
 router.post("/password/reset", resetPassword);
 router.post("/refresh", refreshAccessToken);
-router.get("/me", getProfile);
+router.get("/me", isLoggedIn, getProfile);
 
 export default router;

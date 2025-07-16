@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@repo/ui/components/card";
 import { toast } from "sonner";
-import { CheckCircle, XCircle, RefreshCw } from "lucide-react";
+import { CheckCircle, RefreshCw, XOctagon } from "lucide-react";
 import {
   useLazyFetchUserQuery,
   useVerifyEmailQuery,
@@ -58,6 +58,7 @@ const EmailVerification = () => {
         }, 1000);
       } catch (error: any) {
         toast.error(error?.data?.message || "Failed to fetch user");
+        setVerificationStatus("error");
       }
     } else if (isError) {
       toast.error("Email verification failed");
@@ -84,7 +85,7 @@ const EmailVerification = () => {
               <h2 className="text-xl font-semibold mb-2">
                 Verifying your email
               </h2>
-              <p className="text-zinc-300/70">
+              <p className="text-sm text-zinc-400">
                 Please wait while we verify your email address
               </p>
             </div>
@@ -101,7 +102,7 @@ const EmailVerification = () => {
               <h2 className="text-xl font-semibold text-zinc-200 mb-2">
                 Email Verified!
               </h2>
-              <p className="text-zinc-300/70">
+              <p className="text-sm text-zinc-400">
                 Your email has been successfully verified. You can now access
                 all features of your account.
               </p>
@@ -121,22 +122,27 @@ const EmailVerification = () => {
 
       case "error":
         return (
-          <div className="text-center space-y-6">
+          <div className="max-w-md mx-auto text-center space-y-6 p-6 bg-zinc-900 rounded-lg">
             <div className="flex justify-center">
-              <XCircle className="h-16 w-16 text-red-500" />
+              <XOctagon className="h-16 w-16 text-red-500" aria-hidden="true" />
             </div>
+
             <div>
-              <h2 className="text-xl font-semibold text-zinc-200 mb-2">
+              <h2 className="text-2xl font-bold text-zinc-100 mb-2">
                 Verification Failed
               </h2>
-              <p className="text-zinc-300/70">
-                We couldn't verify your email. The link may be invalid or
+              <p className="text-sm text-zinc-400">
+                We couldn’t verify your email. The link may be invalid or has
                 expired.
               </p>
             </div>
-            <Link to="/resend-verification">
-              <Button className="w-full cursor-pointer" variant={"outline"}>
-                <RefreshCw className="h-4 w-4 mr-2" />
+
+            <Link to="/resend-verification" className="inline-block w-full">
+              <Button
+                variant="outline"
+                className="w-full flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <RefreshCw className="h-4 w-4" />
                 Resend Verification Email
               </Button>
             </Link>
@@ -155,7 +161,7 @@ const EmailVerification = () => {
           <CardTitle className="text-2xl font-bold text-zinc-50">
             Email Verification
           </CardTitle>
-          <CardDescription className="text-zinc-300/70">
+          <CardDescription className="text-sm text-zinc-300/70">
             Verify your email address to complete registration
           </CardDescription>
         </CardHeader>
