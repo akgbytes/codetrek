@@ -16,7 +16,7 @@ import type { RegisterData } from "@repo/zod";
 import { GoogleLogin } from "@react-oauth/google";
 import {
   useGoogleLoginMutation,
-  useLazyGetProfileQuery,
+  useLazyFetchUserQuery,
   useRegisterMutation,
 } from "../services/authApi";
 import { toast } from "sonner";
@@ -36,7 +36,7 @@ const SignUp = () => {
 
   const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
   const [registerUser, { isLoading }] = useRegisterMutation();
-  const [getProfile] = useLazyGetProfileQuery();
+  const [fetchUser] = useLazyFetchUserQuery();
 
   const onSubmit: SubmitHandler<RegisterData> = async (data) => {
     try {
@@ -80,10 +80,10 @@ const SignUp = () => {
 
                     console.log("google login response : ", response);
 
-                    const profileResponse = await getProfile().unwrap();
+                    const userResponse = await fetchUser().unwrap();
                     dispatch(
                       setCredentials({
-                        user: profileResponse.data,
+                        user: userResponse.data,
                       })
                     );
 

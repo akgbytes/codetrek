@@ -43,7 +43,7 @@ const authApi = api.injectEndpoints({
       invalidatesTags: ["User"],
     }),
 
-    getProfile: builder.query<ApiResponse<User>, void>({
+    fetchUser: builder.query<ApiResponse<User>, void>({
       query: () => ({
         url: `${AUTH_PATH}/me`,
         method: "GET",
@@ -52,7 +52,7 @@ const authApi = api.injectEndpoints({
 
     verifyEmail: builder.query<ApiResponse<null>, string>({
       query: (token) => ({
-        url: `${AUTH_PATH}/verify/${token}`,
+        url: `${AUTH_PATH}/email/verify/${token}`,
         method: "GET",
       }),
     }),
@@ -94,5 +94,6 @@ export const {
   useRegisterMutation,
   useLoginMutation,
   useGoogleLoginMutation,
-  useLazyGetProfileQuery,
+  useLazyFetchUserQuery,
+  useVerifyEmailQuery,
 } = authApi;

@@ -7,7 +7,6 @@ import {
 } from "@repo/ui/components/card";
 import { Label } from "@repo/ui/components/label";
 import { Input } from "@repo/ui/components/input";
-import { Checkbox } from "@repo/ui/components/checkbox";
 import { Eye, EyeOff, Loader, Lock, LogIn, Mail } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState } from "react";
@@ -18,7 +17,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useAppDispatch } from "../hooks";
 import {
   useGoogleLoginMutation,
-  useLazyGetProfileQuery,
+  useLazyFetchUserQuery,
   useLoginMutation,
 } from "../services/authApi";
 import { setCredentials } from "../store/features/authSlice";
@@ -38,17 +37,17 @@ const SignIn = () => {
 
   const [loginUser, { isLoading }] = useLoginMutation();
   const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
-  const [getProfile] = useLazyGetProfileQuery();
+  const [fetchUser] = useLazyFetchUserQuery();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
       const response = await loginUser(data).unwrap();
       console.log("login response : ", response);
 
-      const profileResponse = await getProfile().unwrap();
+      const userResponse = await fetchUser().unwrap();
       dispatch(
         setCredentials({
-          user: profileResponse.data,
+          user: userResponse.data,
         })
       );
 
@@ -86,10 +85,10 @@ const SignIn = () => {
 
                     console.log("google login response : ", response);
 
-                    const profileResponse = await getProfile().unwrap();
+                    const userResponse = await fetchUser().unwrap();
                     dispatch(
                       setCredentials({
-                        user: profileResponse.data,
+                        user: userResponse.data,
                       })
                     );
 

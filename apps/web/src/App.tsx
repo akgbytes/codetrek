@@ -11,6 +11,8 @@ import HomeLayout from "./components/layout/HomeLayout";
 import ResendVerification from "./pages/ResendVerification";
 import ForgotPassword from "./pages/ForgotPassword";
 import { Toaster } from "@repo/ui/components/sonner";
+import ResetPassword from "./pages/ResetPassword";
+import EmailVerification from "./pages/EmailVerification";
 
 const App = () => {
   return (
@@ -30,8 +32,10 @@ const App = () => {
         <Route element={<AuthLayout />}>
           <Route path="/signup" element={<SignUp />} />
           <Route path="/signin" element={<SignIn />} />
+          <Route path="/verify-email/:token" element={<EmailVerification />} />
           <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
