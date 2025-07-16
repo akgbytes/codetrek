@@ -59,9 +59,7 @@ const SignUp = () => {
       <div className="w-full max-w-md">
         <Card className="bg-neutral-900 border-white/10 text-zinc-50">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-zinc">
-              Create Account
-            </CardTitle>
+            <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
             <CardDescription className="text-zinc-300/70">
               Start your coding journey
             </CardDescription>

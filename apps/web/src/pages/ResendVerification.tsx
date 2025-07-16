@@ -7,23 +7,95 @@ import {
 } from "@repo/ui/components/card";
 import { Label } from "@repo/ui/components/label";
 import { Input } from "@repo/ui/components/input";
-import { ArrowLeft, Loader, Mail, Send } from "lucide-react";
+import { ArrowLeft, Loader, Mail, RefreshCw, Send } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "@repo/ui/components/button";
 import { Link } from "react-router-dom";
 import type { EmailData } from "@repo/zod";
+import { useResendVerificationMutation } from "../services/authApi";
+import { toast } from "sonner";
+import { useState } from "react";
 
 const ResendVerification = () => {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    getValues,
   } = useForm<EmailData>();
 
-  const isLoading = false;
+  const [resendVerification, { isLoading }] = useResendVerificationMutation();
 
-  const onSubmit: SubmitHandler<EmailData> = async (data) => {};
+  const [emailSent, setEmailSent] = useState(false);
+
+  const onSubmit: SubmitHandler<EmailData> = async (data) => {
+    try {
+      const response = await resendVerification(data).unwrap();
+      setEmailSent(true);
+      toast.success(response.message);
+    } catch (error: any) {
+      toast.error(error.data?.message);
+    }
+  };
+
+  if (emailSent) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Card className="w-full max-w-md bg-neutral-900 border-white/10 text-zinc-50">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">
+              Verification email sent
+            </CardTitle>
+            <CardDescription className="text-zinc-300/70">
+              Check your email for the new verification link
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="text-center space-y-2">
+              <div className="flex justify-center">
+                <Mail className="h-16 w-16 text-green-500" />
+              </div>
+              <div className="flex gap-4 flex-col">
+                <p className="text-sm text-zinc-400">
+                  We've sent a verification link to{" "}
+                  <strong className="text-zinc-200 font-medium">
+                    {getValues("email")}
+                  </strong>
+                  . Please check your email and click the link to verify your
+                  account.
+                </p>
+                <p className="text-zinc-400 text-sm">
+                  Still didn't receive it? Check your spam folder or try again
+                  in a few minutes.
+                </p>
+              </div>
+              <Link to="/login">
+                <Button
+                  onClick={() => setEmailSent(false)}
+                  variant="outline"
+                  className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Send again
+                </Button>
+              </Link>
+            </div>
+
+            <p className="text-zinc-400 text-center text-sm">
+              Already verified?{" "}
+              <Link
+                to="/login"
+                className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"
+              >
+                Go to login
+              </Link>
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -88,7 +160,7 @@ const ResendVerification = () => {
             </form>
 
             <div className="text-center space-y-1">
-              <p className="text-zinc-300/60 text-sm">
+              <p className="text-zinc-400 text-sm">
                 <Link
                   to="/signin"
                   className="hover:text-lime-600 inline-flex items-center"
@@ -97,7 +169,7 @@ const ResendVerification = () => {
                   Back to login
                 </Link>
               </p>
-              <p className="text-zinc-300/60 text-sm">
+              <p className="text-zinc-400 text-sm">
                 Don't have an account?{" "}
                 <Link
                   to="/signup"

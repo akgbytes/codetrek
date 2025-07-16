@@ -9,9 +9,7 @@ import { env } from "@repo/zod";
 export const isLoggedIn: RequestHandler = asyncHandler(
   async (req, res, next) => {
     const { accessToken } = req.cookies;
-
     if (!accessToken) throw new ApiError(401, "Access token missing");
-
     try {
       const decoded = jwt.verify(
         accessToken,
@@ -32,7 +30,6 @@ export const isLoggedIn: RequestHandler = asyncHandler(
       }
 
       req.user = user;
-
       next();
     } catch (error) {
       if (error instanceof TokenExpiredError) {

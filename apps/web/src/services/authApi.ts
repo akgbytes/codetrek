@@ -96,4 +96,5 @@ export const {
   useGoogleLoginMutation,
   useLazyFetchUserQuery,
   useVerifyEmailQuery,
+  useResendVerificationMutation,
 } = authApi;

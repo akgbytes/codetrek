@@ -100,7 +100,7 @@ const EmailVerification = () => {
             </div>
             <div>
               <h2 className="text-xl font-semibold text-zinc-200 mb-2">
-                Email Verified!
+                Email Verified
               </h2>
               <p className="text-sm text-zinc-400">
                 Your email has been successfully verified. You can now access

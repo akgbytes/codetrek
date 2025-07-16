@@ -174,7 +174,7 @@ export const logout: RequestHandler = asyncHandler(async (req, res) => {
 export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
   const { token } = req.params;
 
-  if (!token) throw new ApiError(400, "Verification token is required.");
+  if (!token) throw new ApiError(400, "Verification token is required");
 
   const hashedToken = createHash(token);
 
@@ -189,7 +189,7 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     );
 
   if (!user) {
-    throw new ApiError(410, "The verification link is invalid or has expired.");
+    throw new ApiError(410, "The verification link is invalid or has expired");
   }
 
   const accessToken = generateAccessToken(user);
@@ -217,7 +217,7 @@ export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions())
-    .json(new ApiResponse(200, "Email verified successfully.", null));
+    .json(new ApiResponse(200, "Email verified successfully", null));
 });
 
 export const resendVerificationEmail: RequestHandler = asyncHandler(
@@ -280,7 +280,7 @@ export const forgotPassword: RequestHandler = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          "If an account exists, a reset link has been sent to the email.",
+          "If an account exists, a reset link has been sent to the email",
           null
         )
       );
@@ -323,7 +323,7 @@ export const forgotPassword: RequestHandler = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        "If an account exists, a reset link has been sent to the email.",
+        "If an account exists, a reset link has been sent to the email",
         null
       )
     );
@@ -448,10 +448,10 @@ export const googleLogin: RequestHandler = asyncHandler(async (req, res) => {
     .from(users)
     .where(eq(users.email, email));
 
-  let user: any = existingUser;
+  let user = existingUser;
 
   if (!existingUser) {
-    user = await db
+    const [newUser] = await db
       .insert(users)
       .values({
         email,
@@ -468,16 +468,18 @@ export const googleLogin: RequestHandler = asyncHandler(async (req, res) => {
         role: users.role,
         isVerified: users.isVerified,
       });
+
+    user = newUser;
   }
 
-  const accessToken = generateAccessToken(user);
-  const refreshToken = generateRefreshToken(user);
+  const accessToken = generateAccessToken(user!);
+  const refreshToken = generateRefreshToken(user!);
   const hashedRefreshToken = createHash(refreshToken);
 
   await db
     .update(users)
     .set({ refreshToken: hashedRefreshToken })
-    .where(eq(users.id, user?.id));
+    .where(eq(users.id, user!.id));
 
   logger.info(`${email} logged in via Google`);
 
