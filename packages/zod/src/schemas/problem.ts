@@ -1,4 +1,4 @@
-import { Difficulty } from "@repo/utils";
+import { Difficulty, ProblemType } from "@repo/utils";
 import { z } from "zod";
 import { jsonSchema } from "./json";
 
@@ -28,7 +28,9 @@ export const problemSchema = z.object({
     message: "Difficulty must be either EASY, MEDIUM or HARD",
   }),
 
-  demo: z.boolean().default(false),
+  type: z.nativeEnum(ProblemType, {
+    message: "Types must be either FREE, PREMIUM or DEMO",
+  }),
 
   tags: z
     .array(z.string().trim().min(1, "Tag must not be empty"))

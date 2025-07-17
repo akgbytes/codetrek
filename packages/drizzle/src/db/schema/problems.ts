@@ -8,9 +8,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 import { timestamps } from "../helpers";
-import { Difficulty } from "@repo/utils";
+import { Difficulty, ProblemType } from "@repo/utils";
 
 export const difficultyEnum = pgEnum("difficulty", Difficulty);
+export const problemTypeEnum = pgEnum("type", ProblemType);
 
 export const problems = pgTable("problems", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -18,7 +19,7 @@ export const problems = pgTable("problems", {
   description: text("description").notNull(),
   difficulty: difficultyEnum().notNull(),
   tags: text("tags").array().notNull(),
-  demo: boolean("demo").default(false),
+  type: problemTypeEnum().notNull().default("FREE"),
   createdBy: uuid("created_by")
     .notNull()
     .references(() => users.id, {

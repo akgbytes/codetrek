@@ -14,3 +14,9 @@ export const Difficulty = {
   medium: "MEDIUM",
   hard: "HARD",
 } as const;
+
+export const ProblemType = {
+  free: "FREE",
+  premium: "PREMIUM",
+  demo: "DEMO",
+} as const;
