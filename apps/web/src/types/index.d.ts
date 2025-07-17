@@ -13,7 +13,6 @@ declare global {
 
   interface AuthState {
     user: User | null;
-    isLoggedIn: boolean;
   }
 
   interface BaseResponse {

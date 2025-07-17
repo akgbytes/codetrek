@@ -26,35 +26,31 @@ const EmailVerification = () => {
   >("loading");
   const [countdown, setCountdown] = useState(3);
 
-  const { data, isLoading, isSuccess, isError } = useVerifyEmailQuery(token!, {
-    skip: !token,
-  });
+  const { data, isSuccess, isError } = useVerifyEmailQuery(token!);
 
   let intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   const [fetchUser] = useLazyFetchUserQuery();
 
-  const verifyAndFetchUser = async () => {
-    if (!isLoading) {
-      if (isSuccess && data?.success) {
-        toast.success(data.message || "Email verified successfully");
-        setVerificationStatus("success");
-      }
+  const handleVerification = async () => {
+    if (isSuccess && data?.success) {
+      toast.success(data.message || "Email verified successfully");
+      setVerificationStatus("success");
 
       try {
-        const user = await fetchUser().unwrap();
-        let seconds = 3;
-        setCountdown(seconds);
-        intervalRef.current = setInterval(() => {
-          seconds -= 1;
-          setCountdown(seconds);
+        const response = await fetchUser().unwrap();
+        setCountdown(3);
 
-          if (seconds <= 0 && intervalRef.current) {
-            clearInterval(intervalRef.current);
-            dispatch(setCredentials({ user: user.data }));
-            toast.success("Login successful");
-            navigate("/dashboard");
-          }
+        intervalRef.current = setInterval(() => {
+          setCountdown((prev) => {
+            if (prev <= 1) {
+              clearInterval(intervalRef.current!);
+              dispatch(setCredentials(response.data));
+              toast.success("Login successful");
+              navigate("/dashboard");
+            }
+            return prev - 1;
+          });
         }, 1000);
       } catch (error: any) {
         toast.error(error?.data?.message || "Failed to fetch user");
@@ -67,11 +63,12 @@ const EmailVerification = () => {
   };
 
   useEffect(() => {
-    verifyAndFetchUser();
+    handleVerification();
+
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isLoading, isSuccess, isError, data, dispatch, navigate]);
+  }, [isSuccess, isError, data, fetchUser, dispatch, navigate]);
 
   const renderContent = () => {
     switch (verificationStatus) {
@@ -112,7 +109,7 @@ const EmailVerification = () => {
                 {countdown !== 1 && "s"}...
               </p>
             </div>
-            <Link to="/login">
+            <Link to="/signin">
               <Button className="w-full cursor-pointer" variant={"outline"}>
                 Continue to Login
               </Button>
@@ -122,7 +119,7 @@ const EmailVerification = () => {
 
       case "error":
         return (
-          <div className="max-w-md mx-auto text-center space-y-6 p-6 bg-zinc-900 rounded-lg">
+          <div className="max-w-md mx-auto text-center space-y-6 rounded-lg pb-1">
             <div className="flex justify-center">
               <XOctagon className="h-16 w-16 text-red-500" aria-hidden="true" />
             </div>
@@ -140,7 +137,7 @@ const EmailVerification = () => {
             <Link to="/resend-verification" className="inline-block w-full">
               <Button
                 variant="outline"
-                className="w-full flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
               >
                 <RefreshCw className="h-4 w-4" />
                 Resend Verification Email
@@ -155,18 +152,20 @@ const EmailVerification = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-zinc-900">
-      <Card className="w-full max-w-md bg-zinc-900 border-white/10">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl font-bold text-zinc-50">
-            Email Verification
-          </CardTitle>
-          <CardDescription className="text-sm text-zinc-300/70">
-            Verify your email address to complete registration
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="pt-0">{renderContent()}</CardContent>
-      </Card>
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="w-full max-w-md">
+        <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">
+              Email Verification
+            </CardTitle>
+            <CardDescription className="text-sm text-zinc-300/70">
+              Verify your email address to complete registration
+            </CardDescription>
+          </CardHeader>
+          <CardContent>{renderContent()}</CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

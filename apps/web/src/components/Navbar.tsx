@@ -4,6 +4,14 @@ import { CodeXml } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Navbar = () => {
+  const user = false;
+  const navLinks = [
+    { label: "Problems", to: "" },
+    { label: "Contests", to: "" },
+    { label: "Discuss", to: "" },
+    { label: "Sheets", to: "" },
+  ];
+
   return (
     <nav className="sticky z-[100] h-16 inset-x-0 top-0 w-full border-b border-zinc-800 backdrop-blur-lg transition-all">
       <div className="h-full mx-auto w-full max-w-screen-xl px-2.5 md:px-20">
@@ -18,29 +26,28 @@ const Navbar = () => {
             </div>
           </Link>
 
-          <div className="h-full flex items-center space-x-6">
-            <Link to="" className="hover:text-lime-600">
-              Problems
-            </Link>
-            <Link to="" className="hover:text-lime-600">
-              Contests
-            </Link>
-            <Link to="" className="hover:text-lime-600">
-              Discuss
-            </Link>
-            <Link to="" className="hover:text-lime-600">
-              Sheets
-            </Link>
+          <div className="h-full flex items-center gap-6 text-zinc-200">
+            {navLinks.map(({ label, to }) => (
+              <Link
+                key={label}
+                to={to}
+                className="text-sm font-medium hover:text-lime-500 transition-colors duration-200"
+              >
+                {label}
+              </Link>
+            ))}
           </div>
 
           <div className="h-full flex items-center space-x-4">
             <TbFlame className="mt-1" size={18} data-tip="daily streak" />
-            {false ? (
+            {user ? (
               <Button>Sign out</Button>
             ) : (
-              <Button className="bg-lime-600 cursor-pointer hover:bg-lime-600/90">
-                Sign in
-              </Button>
+              <Link to={"/signin"}>
+                <Button className="bg-lime-600 cursor-pointer hover:bg-lime-600/90">
+                  Sign in
+                </Button>
+              </Link>
             )}
           </div>
         </div>

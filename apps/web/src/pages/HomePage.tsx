@@ -1,6 +1,6 @@
 import HeroSection from "../components/HeroSection";
-import { FAQs } from "../components/ui/FAQs";
-import Features from "../components/ui/Features";
+import { FAQs } from "../components/FAQs";
+import Features from "../components/Features";
 
 const HomePage = () => {
   return (

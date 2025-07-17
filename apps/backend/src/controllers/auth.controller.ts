@@ -36,7 +36,7 @@ export const register: RequestHandler = asyncHandler(async (req, res) => {
     .where(eq(users.email, email));
 
   if (existingUser) {
-    throw new ApiError(409, "Email is already registered.");
+    throw new ApiError(409, "Email is already registered");
   }
 
   const passwordHash = await hashPassword(password);
@@ -102,13 +102,13 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
 
   const [user] = await db.select().from(users).where(eq(users.email, email));
 
-  if (!user) throw new ApiError(401, "Invalid credentials.");
+  if (!user) throw new ApiError(401, "Invalid credentials");
 
   const isPasswordCorrect = await passwordMatch(password, user.passwordHash!);
-  if (!isPasswordCorrect) throw new ApiError(401, "Invalid credentials.");
+  if (!isPasswordCorrect) throw new ApiError(401, "Invalid credentials");
 
   if (!user.isVerified) {
-    throw new ApiError(401, "Please verify your email first.");
+    throw new ApiError(401, "Please verify your email first");
   }
 
   const accessToken = generateAccessToken(user);
@@ -132,7 +132,7 @@ export const login: RequestHandler = asyncHandler(async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, generateCookieOptions())
     .cookie("refreshToken", refreshToken, generateCookieOptions())
-    .json(new ApiResponse(200, "Logged in successfully.", null));
+    .json(new ApiResponse(200, "Logged in successfully", null));
 });
 
 export const logout: RequestHandler = asyncHandler(async (req, res) => {
@@ -140,7 +140,7 @@ export const logout: RequestHandler = asyncHandler(async (req, res) => {
   const { id, email } = req.user;
 
   if (!refreshToken) {
-    throw new ApiError(400, "Refresh token is missing.");
+    throw new ApiError(400, "Refresh token is missing");
   }
 
   await db
@@ -168,7 +168,7 @@ export const logout: RequestHandler = asyncHandler(async (req, res) => {
       secure: env.NODE_ENV === "production",
       sameSite: "strict",
     })
-    .json(new ApiResponse(200, "Logged out successfully.", null));
+    .json(new ApiResponse(200, "Logged out successfully", null));
 });
 
 export const verifyEmail: RequestHandler = asyncHandler(async (req, res) => {
@@ -227,11 +227,11 @@ export const resendVerificationEmail: RequestHandler = asyncHandler(
     const [user] = await db.select().from(users).where(eq(users.email, email));
 
     if (!user) {
-      throw new ApiError(401, "No account found with this email address.");
+      throw new ApiError(401, "No account found with this email address");
     }
 
     if (user.isVerified) {
-      throw new ApiError(400, "Email is already verified.");
+      throw new ApiError(400, "Email is already verified");
     }
 
     const { unHashedToken, hashedToken, tokenExpiry } = generateToken();
@@ -280,7 +280,7 @@ export const forgotPassword: RequestHandler = asyncHandler(async (req, res) => {
       .json(
         new ApiResponse(
           200,
-          "If an account exists, a reset link has been sent to the email",
+          "If an account exists, a reset link has been sent to the email.",
           null
         )
       );
@@ -334,7 +334,7 @@ export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
   const { password } = handleZodError(validateResetPassword(req.body));
 
   if (!token) {
-    throw new ApiError(400, "Password reset token is missing.");
+    throw new ApiError(400, "Password reset token is missing");
   }
 
   const hashedToken = createHash(token);
@@ -350,12 +350,12 @@ export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
     );
 
   if (!user) {
-    throw new ApiError(410, "Reset link has expired or is invalid.");
+    throw new ApiError(410, "Reset link has expired or is invalid");
   }
 
   const isSame = await passwordMatch(password, user.passwordHash!);
   if (isSame) {
-    throw new ApiError(400, "Password must be different from old password.");
+    throw new ApiError(400, "Password must be different from old password");
   }
 
   const hashedPassword = await hashPassword(password);
@@ -377,14 +377,14 @@ export const resetPassword: RequestHandler = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, "Password reset successfully.", null));
+    .json(new ApiResponse(200, "Password reset successfully", null));
 });
 
 export const refreshAccessToken: RequestHandler = asyncHandler(
   async (req, res) => {
     const { refreshToken: incomingRefreshToken } = req.cookies;
     if (!incomingRefreshToken) {
-      throw new ApiError(401, "Refresh token is missing.");
+      throw new ApiError(401, "Refresh token is missing");
     }
 
     const user = req.user;
@@ -403,7 +403,7 @@ export const refreshAccessToken: RequestHandler = asyncHandler(
       .where(eq(users.refreshToken, hashedIncoming));
 
     if (!isRefreshTokenValid) {
-      throw new ApiError(401, "Refresh token has been used or is invalid.");
+      throw new ApiError(401, "Refresh token has been used or is invalid");
     }
 
     const accessToken = generateAccessToken(user);

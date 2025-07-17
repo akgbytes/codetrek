@@ -97,4 +97,6 @@ export const {
   useLazyFetchUserQuery,
   useVerifyEmailQuery,
   useResendVerificationMutation,
+  useForgotPasswordMutation,
+  useResetPasswordMutation,
 } = authApi;

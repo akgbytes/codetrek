@@ -13,8 +13,28 @@ import ForgotPassword from "./pages/ForgotPassword";
 import { Toaster } from "@repo/ui/components/sonner";
 import ResetPassword from "./pages/ResetPassword";
 import EmailVerification from "./pages/EmailVerification";
+import { useAppDispatch } from "./hooks";
+import { useEffect } from "react";
+import { useLazyFetchUserQuery } from "./services/authApi";
+import { setCredentials } from "./store/features/authSlice";
 
 const App = () => {
+  const dispatch = useAppDispatch();
+  const [fetchUser] = useLazyFetchUserQuery();
+
+  useEffect(() => {
+    const restoreUser = async () => {
+      try {
+        const response = await fetchUser().unwrap();
+        dispatch(setCredentials(response.data));
+      } catch (error) {
+        console.log("Not logged in or session expired");
+      }
+
+      restoreUser();
+    };
+  }, []);
+
   return (
     <div className="min-h-[calc(100vh-1px)] flex flex-col bg-neutral-900 text-zinc-50">
       <Routes>
@@ -36,8 +56,8 @@ const App = () => {
           <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password/:token" element={<ResetPassword />} />
-          <Route path="*" element={<NotFound />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
 
       <Toaster position="top-right" richColors={true} theme="light" />

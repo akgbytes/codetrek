@@ -126,6 +126,9 @@ importers:
       '@types/node':
         specifier: ^24.0.14
         version: 24.0.14
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
       lucide-react:
         specifier: ^0.475.0
         version: 0.475.0(react@19.1.0)

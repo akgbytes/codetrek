@@ -5,8 +5,6 @@ import {
   CardContent,
   CardDescription,
 } from "@repo/ui/components/card";
-import { Label } from "@repo/ui/components/label";
-import { Input } from "@repo/ui/components/input";
 import { ArrowLeft, Loader, Mail, RefreshCw, Send } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
@@ -16,6 +14,7 @@ import type { EmailData } from "@repo/zod";
 import { useResendVerificationMutation } from "../services/authApi";
 import { toast } from "sonner";
 import { useState } from "react";
+import TextInput from "../components/ui/TextInput";
 
 const ResendVerification = () => {
   const {
@@ -33,9 +32,12 @@ const ResendVerification = () => {
     try {
       const response = await resendVerification(data).unwrap();
       setEmailSent(true);
-      toast.success(response.message);
+      toast.success(response.message || "Verification email sent");
     } catch (error: any) {
-      toast.error(error.data?.message);
+      toast.error(
+        error?.data?.message ||
+          "Failed to send verification email. Please try again later."
+      );
     }
   };
 
@@ -70,23 +72,22 @@ const ResendVerification = () => {
                   in a few minutes.
                 </p>
               </div>
-              <Link to="/login">
-                <Button
-                  onClick={() => setEmailSent(false)}
-                  variant="outline"
-                  className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
-                >
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Send again
-                </Button>
-              </Link>
+
+              <Button
+                onClick={() => setEmailSent(false)}
+                variant="outline"
+                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Send again
+              </Button>
             </div>
 
             <p className="text-zinc-400 text-center text-sm">
               Already verified?{" "}
               <Link
                 to="/login"
-                className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"
+                className="hover:underline hover:text-lime-600 transition-colors duration-200 text-zinc-200 font-medium"
               >
                 Go to login
               </Link>
@@ -111,33 +112,21 @@ const ResendVerification = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-zinc-50">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Invalid email address",
-                      },
-                    })}
-                    placeholder="kk@example.com"
-                    className="w-full pl-10 pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
-                  />
-                </div>
-
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
-
-                <p className="text-xs text-zinc-300/75 mt-1">
-                  Enter the email address you used to register your account.
-                </p>
-              </div>
+              <TextInput
+                type="email"
+                id="email"
+                label="Email"
+                icon={<Mail className="h-4 w-4" />}
+                placeholder="kk@example.com"
+                error={errors.email?.message}
+                inputProps={register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email address",
+                  },
+                })}
+              />
 
               <Button
                 type="submit"
@@ -163,7 +152,7 @@ const ResendVerification = () => {
               <p className="text-zinc-400 text-sm">
                 <Link
                   to="/signin"
-                  className="hover:text-lime-600 inline-flex items-center"
+                  className="inline-flex items-center hover:underline hover:text-lime-600 transition-colors duration-200 text-zinc-200 font-medium"
                 >
                   <ArrowLeft className="h-4 w-4 mr-1" />
                   Back to login
@@ -173,7 +162,7 @@ const ResendVerification = () => {
                 Don't have an account?{" "}
                 <Link
                   to="/signup"
-                  className="text-zinc-100 hover:underline hover:text-lime-600"
+                  className="hover:underline hover:text-lime-600 transition-colors duration-200 text-zinc-200 font-medium"
                 >
                   Sign up
                 </Link>

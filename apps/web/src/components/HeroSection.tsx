@@ -1,6 +1,6 @@
 import { Button } from "@repo/ui/components/button";
 import { ArrowRight } from "lucide-react";
-import Coder from "./ui/Coder";
+import Coder from "./Coder";
 
 const HeroSection = () => {
   return (

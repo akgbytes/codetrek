@@ -22,7 +22,7 @@ router.post("/google", googleLogin);
 router.get("/email/verify/:token", verifyEmail);
 router.post("/email/resend", resendVerificationEmail);
 router.post("/password/forgot", forgotPassword);
-router.post("/password/reset", resetPassword);
+router.post("/password/reset/:token", resetPassword);
 router.post("/refresh", refreshAccessToken);
 router.get("/me", isLoggedIn, getProfile);
 

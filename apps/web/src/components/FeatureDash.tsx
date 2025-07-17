@@ -1,5 +1,5 @@
 import Lottie from "react-lottie";
-import animationData from "../../../dashboard.json";
+import animationData from "../jsons/dashboard.json";
 
 const FeatureDash = () => {
   const defaultOptions = {

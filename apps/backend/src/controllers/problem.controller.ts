@@ -130,7 +130,7 @@ export const updateProblem: RequestHandler = asyncHandler(async (req, res) => {
 
 export const deleteProblem: RequestHandler = asyncHandler(async (req, res) => {
   const { problemId } = req.params;
-  if (!problemId) throw new ApiError(404, "ProblemId is required.");
+  if (!problemId) throw new ApiError(404, "ProblemId is required");
 
   parseUuid(problemId, "Problem");
 
@@ -145,9 +145,7 @@ export const deleteProblem: RequestHandler = asyncHandler(async (req, res) => {
 
   res
     .status(200)
-    .json(
-      new ApiResponse(200, "Problem deleted successfully.", deletedProblem)
-    );
+    .json(new ApiResponse(200, "Problem deleted successfully", deletedProblem));
 });
 
 export const getAllProblems: RequestHandler = asyncHandler(async (req, res) => {
@@ -156,13 +154,13 @@ export const getAllProblems: RequestHandler = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, "All problems fetched successfully.", allProblems)
+      new ApiResponse(200, "All problems fetched successfully", allProblems)
     );
 });
 
 export const getProblemById: RequestHandler = asyncHandler(async (req, res) => {
   const { problemId } = req.params;
-  if (!problemId) throw new ApiError(404, "ProblemId is required.");
+  if (!problemId) throw new ApiError(404, "ProblemId is required");
 
   parseUuid(problemId, "Problem");
 
@@ -177,7 +175,7 @@ export const getProblemById: RequestHandler = asyncHandler(async (req, res) => {
     .json(
       new ApiResponse(
         200,
-        `Problem with ${problemId} fetched successfully.`,
+        `Problem with ${problemId} fetched successfully`,
         problem
       )
     );

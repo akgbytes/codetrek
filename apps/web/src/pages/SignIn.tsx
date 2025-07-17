@@ -5,9 +5,7 @@ import {
   CardContent,
   CardDescription,
 } from "@repo/ui/components/card";
-import { Label } from "@repo/ui/components/label";
-import { Input } from "@repo/ui/components/input";
-import { Eye, EyeOff, Loader, Lock, LogIn, Mail } from "lucide-react";
+import { Loader, Lock, LogIn, Mail } from "lucide-react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
@@ -15,13 +13,11 @@ import { Link, useNavigate } from "react-router-dom";
 import type { LoginData } from "@repo/zod";
 import { GoogleLogin } from "@react-oauth/google";
 import { useAppDispatch } from "../hooks";
-import {
-  useGoogleLoginMutation,
-  useLazyFetchUserQuery,
-  useLoginMutation,
-} from "../services/authApi";
+import { useLazyFetchUserQuery, useLoginMutation } from "../services/authApi";
 import { setCredentials } from "../store/features/authSlice";
 import { toast } from "sonner";
+import { useGoogleAuth } from "../hooks/useGoogleAuth";
+import TextInput from "../components/ui/TextInput";
 
 const SignIn = () => {
   const {
@@ -36,25 +32,18 @@ const SignIn = () => {
   const navigate = useNavigate();
 
   const [loginUser, { isLoading }] = useLoginMutation();
-  const [googleLogin, { isLoading: googleLoading }] = useGoogleLoginMutation();
+  const { loginWithGoogle, isLoading: googleLoading } = useGoogleAuth();
   const [fetchUser] = useLazyFetchUserQuery();
 
   const onSubmit: SubmitHandler<LoginData> = async (data) => {
     try {
       const response = await loginUser(data).unwrap();
-      console.log("login response : ", response);
-
       const userResponse = await fetchUser().unwrap();
-      dispatch(
-        setCredentials({
-          user: userResponse.data,
-        })
-      );
 
+      dispatch(setCredentials(userResponse.data));
       toast.success(response.message || "Logged in successfully");
       navigate("/dashboard");
     } catch (error: any) {
-      console.log("register error : ", error);
       toast.error(error.data?.message || "Login failed. Please try again.");
     }
   };
@@ -64,9 +53,7 @@ const SignIn = () => {
       <div className="w-full max-w-md">
         <Card className="bg-neutral-900 border-white/10 text-zinc-50">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold text-zinc">
-              Welcome Back
-            </CardTitle>
+            <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
             <CardDescription className="text-zinc-300/70">
               Sign in to your account
             </CardDescription>
@@ -77,32 +64,8 @@ const SignIn = () => {
                 theme="outline"
                 text="continue_with"
                 width={"400px"}
-                onSuccess={async (credentialResponse) => {
-                  try {
-                    const response = await googleLogin({
-                      token: credentialResponse.credential!,
-                    }).unwrap();
-
-                    console.log("google login response : ", response);
-
-                    const userResponse = await fetchUser().unwrap();
-                    dispatch(
-                      setCredentials({
-                        user: userResponse.data,
-                      })
-                    );
-
-                    toast.success(
-                      response.message || "Logged in via Google successfully"
-                    );
-                    navigate("/dashboard");
-                  } catch (error: any) {
-                    console.log("google login error : ", error);
-                    toast.error(
-                      error.data?.message ||
-                        "Login with Google failed. Please try again."
-                    );
-                  }
+                onSuccess={(res) => {
+                  loginWithGoogle(res.credential!);
                 }}
                 onError={() => {
                   toast.error("Login with Google failed. Please try again.");
@@ -120,69 +83,47 @@ const SignIn = () => {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-zinc-50">
-                  Email
-                </Label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-300/70" />
-                  <Input
-                    {...register("email", {
-                      required: "Email is required",
-                      pattern: {
-                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                        message: "Invalid email address",
-                      },
-                    })}
-                    placeholder="Enter your email"
-                    className="w-full pl-10 pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
-                  />
-                </div>
-
-                {errors.email && (
-                  <p className="text-red-500 text-sm">{errors.email.message}</p>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-zinc-50">
-                  Password
-                </Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-zinc-300/70" />
-                  <Input
-                    {...register("password", {
-                      required: "Password is required",
-                      minLength: { value: 6, message: "Min 6 characters" },
-                    })}
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="w-full pl-10 pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-zinc-50"
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </button>
-                </div>
-
-                {errors.password && (
-                  <p className="text-red-500 text-sm">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
+              <TextInput
+                type="email"
+                id="email"
+                label="Email"
+                icon={<Mail className="h-4 w-4" />}
+                placeholder="Enter your email"
+                error={errors.email?.message}
+                inputProps={register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email address",
+                  },
+                })}
+              />
+              <TextInput
+                type={showPassword ? "text" : "password"}
+                id="password"
+                label="Password"
+                icon={<Lock className="h-4 w-4" />}
+                placeholder="Enter your password"
+                error={errors.email?.message}
+                showPasswordToggle
+                showPassword={showPassword}
+                onTogglePassword={() => setShowPassword(!showPassword)}
+                inputProps={register("password", {
+                  required: "Password is required",
+                  minLength: { value: 6, message: "Min 6 characters" },
+                  pattern: {
+                    value:
+                      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/,
+                    message:
+                      "Must include uppercase, lowercase, number and special character.",
+                  },
+                })}
+              />
 
               <div className="flex items-center justify-end">
                 <Link
                   to="/forgot-password"
-                  className="text-sm text-zinc-300/90 hover:text-lime-600"
+                  className="text-sm text-zinc-300/90 hover:text-lime-600 transition-colors duration-200"
                 >
                   Forgot password?
                 </Link>
@@ -213,7 +154,7 @@ const SignIn = () => {
                 <span className="text-zinc-400">Don't have an account? </span>
                 <Link
                   to="/signup"
-                  className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"
+                  className="hover:underline hover:text-lime-600 text-zinc-200 font-medium transition-colors duration-200"
                 >
                   Sign up
                 </Link>
@@ -224,7 +165,7 @@ const SignIn = () => {
                 </span>
                 <Link
                   to="/resend-verification"
-                  className="hover:underline hover:text-lime-600 text-zinc-200 font-medium"
+                  className="hover:underline hover:text-lime-600 text-zinc-200 font-medium transition-colors duration-200"
                 >
                   Resend verification
                 </Link>

@@ -21,14 +21,6 @@ export const validateReferenceSolution = async (
 
   results.forEach((result, idx) => {
     if (result.status.id !== 3) {
-      console.log(result.stdout);
-      console.log(result.compile_output);
-      console.log(result.memory);
-      console.log(result.status);
-      console.log(result.stderr);
-      console.log(result.time);
-
-      console.log("ffffffffffcckckkckckc\n\n\n");
       const errorMessage =
         result.stderr || result.compile_output || "No error output";
       throw new ApiError(

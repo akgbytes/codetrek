@@ -1,4 +1,4 @@
-import { faqs } from "../../constants/faqs";
+import { faqs } from "../constants/faqs";
 import {
   Accordion,
   AccordionContent,
