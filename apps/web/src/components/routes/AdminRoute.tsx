@@ -1,15 +1,10 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 
 const AdminRoute = () => {
-  const isAuthenticated = "";
-  const user = {
-    role: "",
-  };
-
-  return isAuthenticated && user?.role === "admin" ? (
-    <Outlet />
-  ) : (
-    <Navigate to="/unauthorized" replace />
+  return (
+    <>
+      <Outlet />
+    </>
   );
 };
 

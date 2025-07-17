@@ -17,6 +17,11 @@ import { useAppDispatch } from "./hooks";
 import { useEffect } from "react";
 import { useLazyFetchUserQuery } from "./services/authApi";
 import { setCredentials } from "./store/features/authSlice";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLayout from "./components/layout/AdminLayout";
+import Users from "./pages/Admin/Users";
+import Problems from "./pages/Admin/Problems";
+import Analytics from "./pages/Admin/Analytics";
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -46,7 +51,12 @@ const App = () => {
         </Route>
 
         <Route element={<AdminRoute />}>
-          <Route path="/admin" element={null} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="users" element={<Users />} />
+            <Route path="problems" element={<Problems />} />
+            <Route path="analytics" element={<Analytics />} />
+          </Route>
         </Route>
 
         <Route element={<AuthLayout />}>
