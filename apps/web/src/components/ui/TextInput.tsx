@@ -6,7 +6,7 @@ import { Eye, EyeOff } from "lucide-react";
 interface TextInputProps {
   id: string;
   label: string;
-  icon: React.ReactNode;
+  icon?: React.ReactNode;
   placeholder?: string;
   type?: string;
   error?: string;
@@ -34,14 +34,16 @@ const TextInput = ({
         {label}
       </Label>
       <div className="relative">
-        <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300/70">
-          {icon}
-        </div>
+        {icon && (
+          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-zinc-300/70">
+            {icon}
+          </div>
+        )}
         <Input
           id={id}
           type={type}
           placeholder={placeholder}
-          className="w-full pl-10 pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+          className={`w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px] ${icon ? "pl-10" : ""}`}
           {...inputProps}
         />
         {showPasswordToggle && (

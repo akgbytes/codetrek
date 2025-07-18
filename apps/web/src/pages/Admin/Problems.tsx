@@ -1,22 +1,11 @@
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
-import {
-  Delete,
-  Edit,
-  Eye,
-  LucideView,
-  PlusIcon,
-  Search,
-  Trash,
-  View,
-} from "lucide-react";
+import { Edit, Eye, PlusIcon, Search, Trash2 } from "lucide-react";
 import { Badge } from "@repo/ui/components/badge";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
@@ -80,20 +69,22 @@ const Problems = () => {
       </div>
 
       {/* search bar */}
-      <div className="mt-4 relative flex items-center">
-        <Search className="absolute size-4 left-2 text-zinc-400" />
-        <Input
-          className="pl-8 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
-          type="search"
-          placeholder="Search problems by title or tags..."
-        />
+      <div className="flex items-center gap-4 mt-6">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+          <Input
+            className="pl-8 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+            type="search"
+            placeholder="Search problems by title or tags..."
+          />
+        </div>
       </div>
 
       {/* main */}
-      <div className="mt-8">
+      <div className="mt-6">
         <Table>
           <TableHeader>
-            <TableRow className="hover:bg-transparent">
+            <TableRow className="hover:bg-transparent border-white/15">
               {headRow.map((item) => (
                 <TableHead className="text-neutral-400/90">{item}</TableHead>
               ))}
@@ -101,7 +92,7 @@ const Problems = () => {
           </TableHeader>
           <TableBody>
             {data.map((problem) => (
-              <TableRow className="hover:bg-transparent">
+              <TableRow className="hover:bg-transparent border-white/15">
                 <TableCell className="font-medium">{problem.id}</TableCell>
                 <TableCell>{problem.title}</TableCell>
                 <TableCell>
@@ -153,10 +144,31 @@ const Problems = () => {
                 <TableCell>{problem.acceptance}</TableCell>
                 <TableCell>{problem.createdAt}</TableCell>
                 <TableCell>
-                  <div className="flex gap-3">
-                    <Eye size={16} className="cursor-pointer" />
-                    <Edit size={16} className="cursor-pointer" />
-                    <Trash size={16} className="cursor-pointer" />
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {}}
+                      className="cursor-pointer hover:bg-neutral-800 hover:text-zinc-50"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {}}
+                      className="cursor-pointer hover:bg-neutral-800 hover:text-zinc-50"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {}}
+                      className="cursor-pointer text-red-400 hover:text-red-300 hover:bg-neutral-800 "
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </TableRow>

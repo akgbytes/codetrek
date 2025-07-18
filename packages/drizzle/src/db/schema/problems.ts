@@ -18,7 +18,7 @@ export const problems = pgTable("problems", {
   title: text("title").unique().notNull(),
   description: text("description").notNull(),
   difficulty: difficultyEnum().notNull(),
-  tags: text("tags").array().notNull(),
+  tags: text("tags").array(),
   type: problemTypeEnum().notNull().default("FREE"),
   createdBy: uuid("created_by")
     .notNull()

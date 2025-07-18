@@ -29,13 +29,10 @@ export const problemSchema = z.object({
   }),
 
   type: z.nativeEnum(ProblemType, {
-    message: "Types must be either FREE, PREMIUM or DEMO",
+    message: "Types must be either FREE, PREMIUM or ",
   }),
 
-  tags: z
-    .array(z.string().trim().min(1, "Tag must not be empty"))
-    .nonempty({ message: "At least one tag is required" }),
-
+  tags: z.array(z.string().trim().min(1, "Tag must not be empty")),
   examples: z
     .array(
       z.object({
