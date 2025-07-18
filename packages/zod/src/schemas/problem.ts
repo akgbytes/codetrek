@@ -43,14 +43,9 @@ export const problemSchema = z.object({
     )
     .nonempty({ message: "At least one example is required" }),
 
-  constraints: z
-    .array(z.string({ message: "Constraint must be a string" }))
-    .nonempty({ message: "At least one constraint is required" }),
+  constraints: z.array(z.string({ message: "Constraint must be a string" })),
 
-  hints: z
-    .array(z.string({ message: "Hint must be a string" }))
-    .nonempty({ message: "At least one hint is required" }),
-
+  hints: z.array(z.string({ message: "Hint must be a string" })),
   editorial: jsonSchema.optional(),
 
   testcases: testcaseSchema.nonempty({

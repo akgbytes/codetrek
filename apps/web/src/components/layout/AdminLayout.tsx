@@ -12,8 +12,8 @@ const AdminLayout = () => {
     <SidebarProvider defaultOpen={true}>
       <div className="flex min-h-screen w-full">
         <AdminSidebar />
-        <SidebarInset className="bg-neutral-900 flex-1">
-          <header className="sticky top-0 z-50 w-full border-b border-zinc-800">
+        <SidebarInset className="bg-neutral-900 flex-1 ">
+          <header className="sticky top-0 z-50 w-full border-b border-zinc-800 backdrop-blur-lg transition-all">
             <div className="flex gap-3 h-14 items-center px-4">
               <SidebarTrigger />
               <div className="flex flex-1 items-center justify-between">

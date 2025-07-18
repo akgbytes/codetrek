@@ -7,6 +7,7 @@ import {
 import type { Problem } from "@repo/zod";
 import {
   Controller,
+  useFieldArray,
   useForm,
   useWatch,
   type SubmitHandler,
@@ -24,8 +25,9 @@ import {
 } from "@repo/ui/components/select";
 import { useState } from "react";
 import { Button } from "@repo/ui/components/button";
-import { Plus, X } from "lucide-react";
+import { Minus, Plus, X } from "lucide-react";
 import { Badge } from "@repo/ui/components/badge";
+import { Input } from "@repo/ui/components/input";
 
 const CreateProblemForm = () => {
   const {
@@ -76,7 +78,22 @@ const CreateProblemForm = () => {
     "Linked List",
   ];
 
+  const languages = [
+    "PYTHON",
+    "JAVASCRIPT",
+    "JAVA",
+    "CPP",
+    "C",
+    "CSHARP",
+    "GO",
+    "RUST",
+  ];
+
   const [newTag, setNewTag] = useState<string>("");
+
+  const tags = useWatch({ name: "tags", control });
+  const hints = useWatch({ name: "hints", control });
+  const constraints = useWatch({ name: "constraints", control });
 
   const addTag = (tag: string) => {
     if (!tags.includes(tag)) {
@@ -86,20 +103,85 @@ const CreateProblemForm = () => {
     }
   };
 
-  const tags = useWatch({ name: "tags", control });
-
   const removeTag = (tagToRemove: string) => {
     const updatedTags = tags.filter((tag) => tag !== tagToRemove);
 
     setValue("tags", updatedTags);
   };
 
+  // Hints
+  const updateHint = (index: number, value: string) => {
+    const updated = [...hints];
+    updated[index] = value;
+    setValue("hints", updated);
+  };
+
+  const addHint = () => {
+    setValue("hints", [...hints, ""]);
+  };
+
+  const removeHint = (index: number) => {
+    const updated = hints.filter((_, i) => i !== index);
+    setValue("hints", updated);
+  };
+
+  // Constraints
+  const updateConstraint = (index: number, value: string) => {
+    const updated = [...constraints];
+    updated[index] = value;
+    setValue("constraints", updated);
+  };
+
+  const addConstraint = () => {
+    setValue("constraints", [...constraints, ""]);
+  };
+
+  const removeConstraint = (index: number) => {
+    const updated = constraints.filter((_, i) => i !== index);
+    setValue("constraints", updated);
+  };
+
+  const {
+    fields: examples,
+    append: appendExample,
+    remove: removeExample,
+  } = useFieldArray({
+    control,
+    name: "examples",
+  });
+
+  const {
+    fields: codeSnippets,
+    append: appendCodeSnippet,
+    remove: removeCodeSnippet,
+  } = useFieldArray({
+    control,
+    name: "codeSnippets",
+  });
+
+  const {
+    fields: referenceSolutions,
+    append: appendReferenceSolution,
+    remove: removeReferenceSolution,
+  } = useFieldArray({
+    control,
+    name: "referenceSolutions",
+  });
+
+  const {
+    fields: testcases,
+    append: appendTestcase,
+    remove: removeTestcase,
+  } = useFieldArray({
+    control,
+    name: "testcases",
+  });
+
   const onSubmit: SubmitHandler<Problem> = async (data) => {};
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       <h2 className="text-2xl font-bold">Create New Problem</h2>
-
       {/* Basic Information */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
@@ -210,9 +292,9 @@ const CreateProblemForm = () => {
               </Select>
               <Button
                 type="button"
-                variant={"outline"}
                 onClick={() => addTag(newTag)}
                 disabled={!newTag}
+                variant={"outline"}
                 className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
               >
                 <Plus className="w-4 h-4" />
@@ -241,6 +323,348 @@ const CreateProblemForm = () => {
               ))}
             </div>
           </div>
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">Examples</CardTitle>
+            <Button
+              type="button"
+              onClick={() =>
+                appendExample({ input: "", output: "", explanation: "" })
+              }
+              variant={"outline"}
+              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Example
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {examples.map((field, index) => (
+            <div
+              key={field.id}
+              className="border border-white/10 p-4 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">Example {index + 1}</h4>
+                {examples.length > 1 && (
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                    onClick={() => removeExample(index)}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor={`example-input-${index + 1}`}>Input</Label>
+                  <Textarea
+                    id={`example-input-${index + 1}`}
+                    placeholder="Enter input"
+                    className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+                    {...register(`examples.${index}.input`)}
+                    rows={3}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor={`example-output-${index + 1}`}>Output</Label>
+                  <Textarea
+                    id={`example-output-${index + 1}`}
+                    placeholder="Enter output"
+                    className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+                    {...register(`examples.${index}.output`)}
+                    rows={3}
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor={`example-explain-${index + 1}`}>
+                  Explanation
+                </Label>
+                <Textarea
+                  id={`example-explain-${index + 1}`}
+                  placeholder="Enter explanation"
+                  className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+                  {...register(`examples.${index}.explanation`)}
+                  rows={2}
+                />
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">Constraints</CardTitle>
+            <Button
+              type="button"
+              onClick={addConstraint}
+              variant={"outline"}
+              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Constraints
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {constraints.map((constraint, index) => (
+            <div key={index} className="flex gap-2">
+              <Input
+                value={constraint}
+                onChange={(e) => updateConstraint(index, e.target.value)}
+                placeholder="Enter constraint"
+                className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+              />
+
+              {constraints.length > 1 && (
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                  onClick={() => removeConstraint(index)}
+                >
+                  <Minus className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">Hints</CardTitle>
+            <Button
+              type="button"
+              onClick={addHint}
+              variant={"outline"}
+              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Hints
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {hints.map((hint, index) => (
+            <div key={index} className="flex gap-2">
+              <Input
+                value={hint}
+                onChange={(e) => updateHint(index, e.target.value)}
+                placeholder="Enter hint"
+                className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+              />
+
+              {constraints.length > 1 && (
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                  onClick={() => removeHint(index)}
+                >
+                  <Minus className="w-4 h-4" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">Code Snippets</CardTitle>
+            <Button
+              type="button"
+              onClick={() =>
+                appendCodeSnippet({ language: "PYTHON", snippet: "" })
+              }
+              variant={"outline"}
+              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Snippet
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {codeSnippets.map((snippet, index) => (
+            <div
+              key={snippet.id}
+              className="border border-white/10 rounded-lg p-4 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <Controller
+                  control={control}
+                  name={`codeSnippets.${index}.language`}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="w-[360px] border-white/10 focus-visible:ring-zinc-50 focus-visible:ring-[1px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {languages.map((lang) => (
+                          <SelectItem key={lang} value={lang}>
+                            {lang}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {codeSnippets.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeCodeSnippet(index)}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+
+              <Textarea
+                {...register(`codeSnippets.${index}.snippet`)}
+                placeholder="Enter code snippet"
+                rows={6}
+                className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+              />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      {/* Reference Solution */}
+      <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">
+              Reference Solutions
+            </CardTitle>
+            <Button
+              type="button"
+              onClick={() =>
+                appendReferenceSolution({ language: "PYTHON", solution: "" })
+              }
+              variant={"outline"}
+              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Solution
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {referenceSolutions.map((solution, index) => (
+            <div
+              key={solution.id}
+              className="border border-white/10 rounded-lg p-4 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <Controller
+                  control={control}
+                  name={`referenceSolutions.${index}.language`}
+                  render={({ field }) => (
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <SelectTrigger className="w-[360px] border-white/10 focus-visible:ring-zinc-50 focus-visible:ring-[1px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {languages.map((lang) => (
+                          <SelectItem key={lang} value={lang}>
+                            {lang}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+                {referenceSolutions.length > 1 && (
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                    onClick={() => removeReferenceSolution(index)}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+
+              <Textarea
+                {...register(`referenceSolutions.${index}.solution`)}
+                placeholder="Enter reference solution"
+                rows={8}
+                className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+              />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+      {/* TestCases */}
+      <Card className="bg-neutral-900 border-white/10 text-zinc-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-2xl font-bold">Test Cases</CardTitle>
+            <Button
+              type="button"
+              onClick={() => appendTestcase({ input: "", output: "" })}
+              variant={"outline"}
+              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Add Test Case
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {testcases.map((testcase, index) => (
+            <div
+              key={testcase.id}
+              className="border border-white/10 rounded-lg p-4 space-y-3"
+            >
+              <div className="flex items-center justify-between">
+                <h4 className="font-medium">Test Case {index + 1}</h4>
+                {testcases.length > 1 && (
+                  <Button
+                    type="button"
+                    variant={"outline"}
+                    className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                    onClick={() => removeTestcase(index)}
+                  >
+                    <Minus className="w-4 h-4" />
+                  </Button>
+                )}
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Input</Label>
+                  <Textarea
+                    {...register(`testcases.${index}.input`)}
+                    placeholder="Enter test input"
+                    rows={3}
+                    className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label>Expected Output</Label>
+                  <Textarea
+                    {...register(`testcases.${index}.output`)}
+                    placeholder="Enter expected output"
+                    rows={3}
+                    className="w-full pr-4 py-3 border rounded border-white/10 bg-zinc-900 text-zinc-200 focus-visible:ring-zinc-50 focus-visible:ring-[1px]"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
         </CardContent>
       </Card>
     </form>
