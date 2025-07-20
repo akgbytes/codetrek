@@ -13,6 +13,7 @@ import {
   type SubmitHandler,
 } from "react-hook-form";
 
+import { availableTags, languages } from "../constants/problem";
 import TextInput from "./ui/TextInput";
 import { Label } from "@repo/ui/components/label";
 import { Textarea } from "@repo/ui/components/textarea";
@@ -53,48 +54,13 @@ const CreateProblemForm = () => {
     },
   });
 
-  const availableTags = [
-    "Array",
-    "String",
-    "Hash Table",
-    "Dynamic Programming",
-    "Math",
-    "Sorting",
-    "Greedy",
-    "Depth-First Search",
-    "Database",
-    "Binary Search",
-    "Tree",
-    "Breadth-First Search",
-    "Matrix",
-    "Two Pointers",
-    "Binary Tree",
-    "Heap",
-    "Stack",
-    "Graph",
-    "Design",
-    "Simulation",
-    "Backtracking",
-    "Linked List",
-  ];
-
-  const languages = [
-    "PYTHON",
-    "JAVASCRIPT",
-    "JAVA",
-    "CPP",
-    "C",
-    "CSHARP",
-    "GO",
-    "RUST",
-  ];
-
   const [newTag, setNewTag] = useState<string>("");
 
   const tags = useWatch({ name: "tags", control });
   const hints = useWatch({ name: "hints", control });
   const constraints = useWatch({ name: "constraints", control });
 
+  // Tags
   const addTag = (tag: string) => {
     if (!tags.includes(tag)) {
       const updatedTags = [...tags, tag];
@@ -110,12 +76,6 @@ const CreateProblemForm = () => {
   };
 
   // Hints
-  const updateHint = (index: number, value: string) => {
-    const updated = [...hints];
-    updated[index] = value;
-    setValue("hints", updated);
-  };
-
   const addHint = () => {
     setValue("hints", [...hints, ""]);
   };
@@ -125,19 +85,25 @@ const CreateProblemForm = () => {
     setValue("hints", updated);
   };
 
-  // Constraints
-  const updateConstraint = (index: number, value: string) => {
-    const updated = [...constraints];
+  const updateHint = (index: number, value: string) => {
+    const updated = [...hints];
     updated[index] = value;
-    setValue("constraints", updated);
+    setValue("hints", updated);
   };
 
+  // Constraints
   const addConstraint = () => {
     setValue("constraints", [...constraints, ""]);
   };
 
   const removeConstraint = (index: number) => {
     const updated = constraints.filter((_, i) => i !== index);
+    setValue("constraints", updated);
+  };
+
+  const updateConstraint = (index: number, value: string) => {
+    const updated = [...constraints];
+    updated[index] = value;
     setValue("constraints", updated);
   };
 
@@ -294,8 +260,7 @@ const CreateProblemForm = () => {
                 type="button"
                 onClick={() => addTag(newTag)}
                 disabled={!newTag}
-                variant={"outline"}
-                className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
               >
                 <Plus className="w-4 h-4" />
               </Button>
@@ -325,6 +290,8 @@ const CreateProblemForm = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Examples */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -334,8 +301,7 @@ const CreateProblemForm = () => {
               onClick={() =>
                 appendExample({ input: "", output: "", explanation: "" })
               }
-              variant={"outline"}
-              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+              className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Example
@@ -346,15 +312,14 @@ const CreateProblemForm = () => {
           {examples.map((field, index) => (
             <div
               key={field.id}
-              className="border border-white/10 p-4 space-y-3"
+              className="border rounded border-white/10 p-4 space-y-3"
             >
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Example {index + 1}</h4>
                 {examples.length > 1 && (
                   <Button
                     type="button"
-                    variant={"outline"}
-                    className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                    className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
                     onClick={() => removeExample(index)}
                   >
                     <Minus className="w-4 h-4" />
@@ -399,6 +364,8 @@ const CreateProblemForm = () => {
           ))}
         </CardContent>
       </Card>
+
+      {/* Constraints */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -406,8 +373,7 @@ const CreateProblemForm = () => {
             <Button
               type="button"
               onClick={addConstraint}
-              variant={"outline"}
-              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+              className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Constraints
@@ -427,8 +393,7 @@ const CreateProblemForm = () => {
               {constraints.length > 1 && (
                 <Button
                   type="button"
-                  variant={"outline"}
-                  className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                  className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
                   onClick={() => removeConstraint(index)}
                 >
                   <Minus className="w-4 h-4" />
@@ -438,6 +403,8 @@ const CreateProblemForm = () => {
           ))}
         </CardContent>
       </Card>
+
+      {/* Hints */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -445,8 +412,7 @@ const CreateProblemForm = () => {
             <Button
               type="button"
               onClick={addHint}
-              variant={"outline"}
-              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+              className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Hints
@@ -466,8 +432,7 @@ const CreateProblemForm = () => {
               {constraints.length > 1 && (
                 <Button
                   type="button"
-                  variant={"outline"}
-                  className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                  className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
                   onClick={() => removeHint(index)}
                 >
                   <Minus className="w-4 h-4" />
@@ -477,6 +442,8 @@ const CreateProblemForm = () => {
           ))}
         </CardContent>
       </Card>
+
+      {/* Code Snippets */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -486,8 +453,7 @@ const CreateProblemForm = () => {
               onClick={() =>
                 appendCodeSnippet({ language: "PYTHON", snippet: "" })
               }
-              variant={"outline"}
-              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+              className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Snippet
@@ -498,7 +464,7 @@ const CreateProblemForm = () => {
           {codeSnippets.map((snippet, index) => (
             <div
               key={snippet.id}
-              className="border border-white/10 rounded-lg p-4 space-y-3"
+              className="border rounded border-white/10 p-4 space-y-3"
             >
               <div className="flex items-center justify-between">
                 <Controller
@@ -522,8 +488,7 @@ const CreateProblemForm = () => {
                 {codeSnippets.length > 1 && (
                   <Button
                     type="button"
-                    variant="ghost"
-                    size="sm"
+                    className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
                     onClick={() => removeCodeSnippet(index)}
                   >
                     <Minus className="w-4 h-4" />
@@ -541,6 +506,7 @@ const CreateProblemForm = () => {
           ))}
         </CardContent>
       </Card>
+
       {/* Reference Solution */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
@@ -553,8 +519,7 @@ const CreateProblemForm = () => {
               onClick={() =>
                 appendReferenceSolution({ language: "PYTHON", solution: "" })
               }
-              variant={"outline"}
-              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+              className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Solution
@@ -565,7 +530,7 @@ const CreateProblemForm = () => {
           {referenceSolutions.map((solution, index) => (
             <div
               key={solution.id}
-              className="border border-white/10 rounded-lg p-4 space-y-3"
+              className="border rounded border-white/10 p-4 space-y-3"
             >
               <div className="flex items-center justify-between">
                 <Controller
@@ -589,8 +554,7 @@ const CreateProblemForm = () => {
                 {referenceSolutions.length > 1 && (
                   <Button
                     type="button"
-                    variant={"outline"}
-                    className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                    className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
                     onClick={() => removeReferenceSolution(index)}
                   >
                     <Minus className="w-4 h-4" />
@@ -608,6 +572,7 @@ const CreateProblemForm = () => {
           ))}
         </CardContent>
       </Card>
+
       {/* TestCases */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>
@@ -616,8 +581,7 @@ const CreateProblemForm = () => {
             <Button
               type="button"
               onClick={() => appendTestcase({ input: "", output: "" })}
-              variant={"outline"}
-              className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+              className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
             >
               <Plus className="w-4 h-4 mr-2" />
               Add Test Case
@@ -628,15 +592,14 @@ const CreateProblemForm = () => {
           {testcases.map((testcase, index) => (
             <div
               key={testcase.id}
-              className="border border-white/10 rounded-lg p-4 space-y-3"
+              className="border rounded border-white/10 p-4 space-y-3"
             >
               <div className="flex items-center justify-between">
                 <h4 className="font-medium">Test Case {index + 1}</h4>
                 {testcases.length > 1 && (
                   <Button
                     type="button"
-                    variant={"outline"}
-                    className="cursor-pointer bg-lime-600 hover:bg-lime-600/90 border-0 hover:text-zinc-50"
+                    className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
                     onClick={() => removeTestcase(index)}
                   >
                     <Minus className="w-4 h-4" />
@@ -667,6 +630,22 @@ const CreateProblemForm = () => {
           ))}
         </CardContent>
       </Card>
+
+      <div className="flex gap-4 justify-end">
+        <Button
+          type="button"
+          className="border border-zinc-700 cursor-pointer hover:bg-zinc-800 transition-colors duration-200"
+          onClick={() => {}}
+        >
+          Cancel
+        </Button>
+        <Button
+          type="submit"
+          className="bg-lime-600 hover:bg-lime-600/90 transition-colors duration-200 cursor-pointer"
+        >
+          Create Problem
+        </Button>
+      </div>
     </form>
   );
 };

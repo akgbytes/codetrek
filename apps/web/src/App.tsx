@@ -41,7 +41,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-1px)] flex flex-col bg-neutral-900 text-zinc-50">
+    <div className="min-h-[calc(100vh-1px)] flex flex-col ">
       <Routes>
         <Route element={<HomeLayout />}>
           <Route path="/" element={<HomePage />} />

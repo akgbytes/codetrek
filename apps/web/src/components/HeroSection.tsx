@@ -19,11 +19,11 @@ const HeroSection = () => {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mb-8">
-          <Button className="bg-lime-600 hover:bg-lime-600/90 cursor-pointer">
+          <Button className="cursor-pointer">
             Start Coding
             <ArrowRight className="ml-2 w-4 h-4" />
           </Button>
-          <Button className="bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 cursor-pointer">
+          <Button className="bg-zinc-900 hover:bg-zinc-800/35 border border-zinc-800 cursor-pointer">
             View Problems
           </Button>
         </div>

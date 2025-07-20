@@ -9,7 +9,7 @@ export const Footer = () => {
       <div className="h-full mx-auto w-full max-w-screen-xl px-2.5 md:px-20 py-8 flex flex-col  md:flex-row md:justify-between">
         {/* Left Section */}
         <div className="flex gap-4 flex-col max-w-md">
-          <div className="flex gap-2 w-48 hover:scale-105 transition-all cursor-pointer">
+          <div className="flex gap-2 w-48 hover:scale-105 transition-all duration-300 cursor-pointer">
             <CodeXml color="#65a30d" />
             <div className="text-base font-semibold">
               Code<span className="">Trek</span>

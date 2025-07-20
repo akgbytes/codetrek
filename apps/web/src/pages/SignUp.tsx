@@ -129,8 +129,8 @@ const SignUp = () => {
 
               <Button
                 type="submit"
-                variant={"outline"}
-                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
+                variant={"secondary"}
+                className="w-full cursor-pointer py-5 rounded-[4px]"
                 disabled={isLoading || googleLoading}
               >
                 {isLoading ? (

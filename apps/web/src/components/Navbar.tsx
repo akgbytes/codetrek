@@ -44,9 +44,7 @@ const Navbar = () => {
               <Button>Sign out</Button>
             ) : (
               <Link to={"/signin"}>
-                <Button className="bg-lime-600 cursor-pointer hover:bg-lime-600/90">
-                  Sign in
-                </Button>
+                <Button className="cursor-pointer">Sign in</Button>
               </Link>
             )}
           </div>

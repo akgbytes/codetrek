@@ -131,8 +131,8 @@ const SignIn = () => {
 
               <Button
                 type="submit"
-                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
-                variant={"outline"}
+                variant={"secondary"}
+                className="w-full cursor-pointer py-5 rounded-[4px]"
                 disabled={isLoading || googleLoading}
               >
                 {isLoading ? (

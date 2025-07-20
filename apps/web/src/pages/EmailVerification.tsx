@@ -136,8 +136,8 @@ const EmailVerification = () => {
 
             <Link to="/resend-verification" className="inline-block w-full">
               <Button
-                variant="outline"
-                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
+                variant={"secondary"}
+                className="w-full cursor-pointer py-5 rounded-[4px]"
               >
                 <RefreshCw className="h-4 w-4" />
                 Resend Verification Email

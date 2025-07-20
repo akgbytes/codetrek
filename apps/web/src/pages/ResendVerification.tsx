@@ -75,8 +75,8 @@ const ResendVerification = () => {
 
               <Button
                 onClick={() => setEmailSent(false)}
-                variant="outline"
-                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
+                variant={"secondary"}
+                className="w-full cursor-pointer py-5 rounded-[4px]"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Send again
@@ -130,8 +130,8 @@ const ResendVerification = () => {
 
               <Button
                 type="submit"
-                className="w-full cursor-pointer py-5 rounded-[4px] text-zinc-700"
-                variant={"outline"}
+                variant={"secondary"}
+                className="w-full cursor-pointer py-5 rounded-[4px]"
                 disabled={isLoading}
               >
                 {isLoading ? (

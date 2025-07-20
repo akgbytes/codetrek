@@ -1,6 +1,6 @@
 import { Button } from "@repo/ui/components/button";
 import { Input } from "@repo/ui/components/input";
-import { Edit, Eye, PlusIcon, Search, Trash2 } from "lucide-react";
+import { Edit, Eye, Plus, Search, Trash2 } from "lucide-react";
 import { Badge } from "@repo/ui/components/badge";
 import {
   Table,
@@ -11,6 +11,15 @@ import {
   TableRow,
 } from "@repo/ui/components/table";
 import clsx from "clsx";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@repo/ui/components/dialog";
+import CreateProblemForm from "../../components/CreateProblemForm";
 
 const Problems = () => {
   const data = [
@@ -59,16 +68,27 @@ const Problems = () => {
   ];
 
   return (
-    <div>
+    <div className="w-full h-full">
       <div className="flex justify-between">
         <h1 className="text-3xl">Problem Management</h1>
-        <Button className="cursor-pointer py-5 rounded-[4px] bg-lime-600 hover:bg-lime-600/90">
-          <PlusIcon />
-          Create Problem
-        </Button>
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button className="cursor-pointer py-5 rounded-[4px] bg-lime-600 hover:bg-lime-600/90">
+              <Plus className="w-4 h-4" />
+              Create Problem
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="min-w-6xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Create New Problem</DialogTitle>
+            </DialogHeader>
+            <CreateProblemForm />
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* search bar */}
+      {/* Search bar */}
       <div className="flex items-center gap-4 mt-6">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -80,7 +100,7 @@ const Problems = () => {
         </div>
       </div>
 
-      {/* main */}
+      {/* Main */}
       <div className="mt-6">
         <Table>
           <TableHeader>

@@ -8,11 +8,21 @@ import {
   LayoutDashboard,
 } from "lucide-react";
 import FeatureDash from "./FeatureDash";
+import { motion } from "motion/react";
 
 const Features = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4 md:auto-rows-[240px] auto-rows-auto items-start">
-      <div className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 row-span-1 lg:row-span-1">
+      <motion.div
+        className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 row-span-1 lg:row-span-1"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">Daily Streak Feature</span>
@@ -23,9 +33,18 @@ const Features = () => {
           stay accountable. Visualize your consistency, spot weak areas, and
           celebrate wins, one day at a time.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 row-span-2 lg:row-span-2">
+      <motion.div
+        className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 row-span-2 lg:row-span-2"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-2xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">Discuss with AlgoAI</span>
@@ -39,9 +58,18 @@ const Features = () => {
         <div className="-mb-4 mt-2">
           <img src="/mfeat.png" alt="" />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 row-span-2  lg:row-span-2">
+      <motion.div
+        className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 row-span-2  lg:row-span-2"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">Profile Dashboard</span>
@@ -56,9 +84,18 @@ const Features = () => {
         <div className="-mb-3 flex justify-center items-center">
           <FeatureDash />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-neutral-900/10 -mt-12 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 lg:row-span-1 ">
+      <motion.div
+        className="bg-neutral-900/10 -mt-12 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 lg:row-span-1"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">Discussion Forum</span>
@@ -70,9 +107,18 @@ const Features = () => {
           curious about a concept, or just want to swap stories from recent
           interviews, the forum has your back.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6  hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-4  lg:row-span-1 md:-mt-20   ">
+      <motion.div
+        className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6  hover:shadow-neutral-500/40 col-span-6 lg:col-span-4  lg:row-span-1 md:-mt-20"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">Built-in Code Editor</span>
@@ -89,9 +135,18 @@ const Features = () => {
             className="cursor-pointer w-full h-[300px] border"
           />
         </div>
-      </div>
+      </motion.div>
 
-      <div className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-2  lg:row-span-1 lg:-mt-20">
+      <motion.div
+        className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-neutral-500/40 col-span-6 lg:col-span-2  lg:row-span-1 lg:-mt-20"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">
@@ -105,9 +160,18 @@ const Features = () => {
           Programming, Trees, and Graphs. Easily filter by difficulty or focus
           on company-specific patterns to align your prep with your dream role.
         </p>
-      </div>
+      </motion.div>
 
-      <div className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-md hover:shadow-neutral-500/40 col-span-6 lg:col-span-2  lg:col-start-5 lg:-mt-16">
+      <motion.div
+        className="bg-neutral-900/10 relative border border-neutral-800 rounded-2xl p-6 hover:shadow-neutral-500/40 col-span-6 lg:col-span-2 lg:col-start-5 lg:-mt-16"
+        whileHover={{ scale: 1.03 }}
+        whileTap={{ scale: 0.98 }}
+        transition={{
+          type: "spring",
+          stiffness: 150,
+          damping: 25,
+        }}
+      >
         <div className="absolute inset-0 opacity-10 pointer-events-none" />
         <h3 className="text-xl font-semibold mb-2 flex gap-2 text-white">
           <span className="text-zinc-100 text-2xl">Practice Sheets</span>
@@ -118,7 +182,7 @@ const Features = () => {
           and skill level. Want more control? Build your own custom problem sets
           tailored to your goals.
         </p>
-      </div>
+      </motion.div>
     </div>
   );
 };
