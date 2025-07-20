@@ -21,5 +21,5 @@ import authRoutes from "./routes/auth.route";
 
 app.use("/api/v1/health", healthRoute);
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1/problem", problemRoutes);
+app.use("/api/v1/problems", problemRoutes);
 app.use(errorHandler);

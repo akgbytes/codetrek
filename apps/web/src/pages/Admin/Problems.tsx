@@ -79,9 +79,11 @@ const Problems = () => {
               Create Problem
             </Button>
           </DialogTrigger>
-          <DialogContent className="min-w-6xl max-h-[90vh] overflow-y-auto">
+          <DialogContent className="min-w-5xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Create New Problem</DialogTitle>
+              <DialogTitle className="text-2xl font-bold">
+                Create New Problem
+              </DialogTitle>
             </DialogHeader>
             <CreateProblemForm />
           </DialogContent>

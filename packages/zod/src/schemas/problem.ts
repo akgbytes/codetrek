@@ -75,7 +75,7 @@ export const problemSchema = z.object({
 
 export const updateProblemSchema = problemSchema.partial();
 
-export type Problem = z.infer<typeof problemSchema>;
+export type CreateProblemData = z.infer<typeof problemSchema>;
 
 export const validateProblemData = (data: unknown) =>
   problemSchema.safeParse(data);

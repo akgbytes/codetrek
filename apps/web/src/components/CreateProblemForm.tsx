@@ -147,7 +147,6 @@ const CreateProblemForm = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <h2 className="text-2xl font-bold">Create New Problem</h2>
       {/* Basic Information */}
       <Card className="bg-neutral-900 border-white/10 text-zinc-50">
         <CardHeader>

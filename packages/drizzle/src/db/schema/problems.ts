@@ -9,6 +9,7 @@ import {
 import { users } from "./users";
 import { timestamps } from "../helpers";
 import { Difficulty, ProblemType } from "@repo/utils";
+import { InferSelectModel } from "drizzle-orm";
 
 export const difficultyEnum = pgEnum("difficulty", Difficulty);
 export const problemTypeEnum = pgEnum("type", ProblemType);
@@ -35,3 +36,5 @@ export const problems = pgTable("problems", {
 
   ...timestamps,
 });
+
+export type Problem = InferSelectModel<typeof problems>;
