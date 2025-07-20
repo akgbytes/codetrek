@@ -1,4 +1,5 @@
-import type { CreateProblemData } from "@repo/zod";
+import type { CreateProblemData, UpdateProblemData } from "@repo/zod";
+import type { Problem } from "@repo/drizzle";
 import { PROBLEM_PATH } from "../constants";
 import { api } from "./api";
 
@@ -15,41 +16,35 @@ const authApi = api.injectEndpoints({
       }),
     }),
 
-    updateProblem: builder.mutation<ApiResponse<>, Problem>({
-      query: (data) => ({
-        url: `${PROBLEM_PATH}/create`,
-        method: "POST",
-        body: data,
+    updateProblem: builder.mutation<
+      ApiResponse<Problem>,
+      UpdateProblemData & { id: string }
+    >({
+      query: ({ id, ...rest }) => ({
+        url: `${PROBLEM_PATH}/update/${id}`,
+        method: "PATCH",
+        body: rest,
       }),
     }),
-    createProblem: builder.mutation<
-      ApiResponse<{ id: string; title: string }>,
-      Problem
-    >({
-      query: (data) => ({
-        url: `${PROBLEM_PATH}/create`,
-        method: "POST",
-        body: data,
+
+    deleteProblem: builder.mutation<ApiResponse<Problem>, { id: string }>({
+      query: ({ id }) => ({
+        url: `${PROBLEM_PATH}/delete/${id}`,
+        method: "DELETE",
       }),
     }),
-    createProblem: builder.mutation<
-      ApiResponse<{ id: string; title: string }>,
-      Problem
-    >({
-      query: (data) => ({
-        url: `${PROBLEM_PATH}/create`,
-        method: "POST",
-        body: data,
+
+    getAllProblems: builder.query<ApiResponse<Problem[]>, void>({
+      query: () => ({
+        url: `${PROBLEM_PATH}`,
+        method: "GET",
       }),
     }),
-    createProblem: builder.mutation<
-      ApiResponse<{ id: string; title: string }>,
-      Problem
-    >({
-      query: (data) => ({
-        url: `${PROBLEM_PATH}/create`,
-        method: "POST",
-        body: data,
+
+    getProblemById: builder.query<ApiResponse<Problem>, { id: string }>({
+      query: ({ id }) => ({
+        url: `${PROBLEM_PATH}/${id}`,
+        method: "GET",
       }),
     }),
   }),
@@ -57,4 +52,10 @@ const authApi = api.injectEndpoints({
   overrideExisting: false,
 });
 
-export const {} = authApi;
+export const {
+  useCreateProblemMutation,
+  useUpdateProblemMutation,
+  useDeleteProblemMutation,
+  useLazyGetAllProblemsQuery,
+  useLazyGetProblemByIdQuery,
+} = authApi;

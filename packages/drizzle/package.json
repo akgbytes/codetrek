@@ -5,10 +5,9 @@
   "main": "./src/index.ts",
   "author": "akgbytes",
   "license": "ISC",
-  "type": "commonjs",
-   "exports": {
-    "default": "./dist/index.js",
-    "types": "./dist/index.d.ts"
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",

@@ -20,6 +20,7 @@
     "@reduxjs/toolkit": "^2.8.2",
     "@repo/ui": "workspace:*",
     "@repo/zod": "workspace:*",
+    "@repo/drizzle": "workspace:*",
     "@types/node": "^24.0.14",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
